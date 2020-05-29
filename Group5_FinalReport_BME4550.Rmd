@@ -1,0 +1,1493 @@
+---
+title: "Investigation of bacterial taxonomy in gut microbiome and its effects on ADHD progression and neural reward anticipation"
+author: "Dhyey Parikh, Sarah Meng, An Smith, Dana Wang (Group 5)"
+date: "4/26/2020"
+output:
+  html_document: default
+
+---
+
+### **Abstract**
+|        The gut microbiome has been shown to play a significant role in host metabolism, immune, and neuroendocrine response. Disruptions in this microbiome are associated with chronic health issues including inflammatory bowel disease, diabetes, and cancers. Recent studies have linked the diversity of the gut microbiome to brain functionality. Specifically, these studies indicate changes in the microbiome may contribute to Attention-deficit/Hyperactivity disorder (ADHD) etiology, a neurodevelopmental disorder linked to changes in dopamine neurotransmission. The purpose of this study is to compare the gut microbiome taxonomy between ADHD and non-ADHD patients. 16S rRNA sequencing data was filtered using the UCHIME algorithm and aligned to the SILVA database. The SILVA database and Ribosomal Database Project (RDP) were used for taxonomic assignment of sequence reads and visualized using various libraries within in house developed R scripts. Total reads counts per taxonomic level were analysed and relative abundance of bacterial phyla and genera were quantified between healthy and ADHD participants. Two-sample Mann–Whitney–Wilcoxon U tests were used to determine that there is a statistical significance of the Actinobacteria phyla between ADHD and control participants. Mann–Whitney–Wilcoxon U tests were also used to determine statistical significance of the *Bifidobacterium* genus bacterial levels and statistical insignificance for the *Blautia* genus bacterial levels between the ADHD and control participants.
+ 
+
+### **Introduction**
+|        The gut microbiome consists of all of the microorganisms, bacteria, viruses, protozoa, and fungi that are present in the gastrointestinal (GI) tract. The effect of the gut microbiome on the host has been studied intensively in the past decade. The microbiota play a crucial role in nutrient and mineral absorption, synthesis of enzymes, vitamins, and amino acids, which leads to its important effect on metabolism, immune, and neuroendocrine responses.$^{1}$ The development and alteration of the microbiome in the GI tract are caused by many factors, which include infant feeding method, stress, medications, diet and age. If the gut microbiome is disrupted, it could cause dysbiosis, the alteration of the microbial community that results in decreased diversity of bacteria and decreased number of beneficial bacteria. Many studies suggest that there is a relationship between dysbiosis in the gut microbiome and chronic health conditions, such as inflammatory bowel disease and cancer.$^{1}$ 
+
+|        The GI tract is connected to the brain by the gut-brain axis (GBA) which consists of bidirectional communication between the central nervous system and the enteric nervous system, which governs the function of the GI tract. The communication between the two nervous systems is primarily controlled by neural, endocrine, immune, and humoral links.$^{2}$ Recent studies have shown the importance of GBA in modulating the risk of developing attention-deficit/hyperactivity disorder (ADHD).$^{3}$ ADHD is a neurodevelopmental disorder that is characterized by inattention, hyperactivity, and impulsivity. It is caused by abnormalities in dopamine neurotransmission and in reward processing and its neural-circuitry.$^{4}$ 
+|        Gut microbiota are made of many species of microorganisms, with the dominant gut microbial phyla being Firmicutes, Bacteroidetes, Actinobacteria, Proteobacteria, Fusobacteria, and Verrucomicrobia.$^{5}$ Previous studies have identified a significant increase in Actinobacteria, Firmicutes, and Bacteroidetes between patients with ADHD and patients without.$^{6,7}$ Within Actinobacteria, the genus *Bifidobacterium*, were found to show the most taxonomic specific change.$^{8}$ Previous studies also have identified a significant increase in Firmicutes, specifically the genus *Blautia*, in patients with neurodegenerative disorders.$^{9}$
+|        This project will only look at the two most abundant phyla seen in the gut microbiome of the patients from the databases, Actinobacteria and Firmicutes. Within these phyla it was found that bacteria in the *Bifidobacterium* and *Blautia* genera were the most abundant.
+|        The increase of the bacteria in these genera can be either beneficial or detrimental to the host. An increase of the species within *Blautia* are associated with neurodegenerative disorders, specifically Parkinsons.$^{9}$ Species within *Bifidobacterium* are among the first microbes to colonize the human GI tract and have been reported to confer numerous positive health benefits, including being used to treat colorectal cancer and inflammatory bowel disease.$^{8}$ An increase in *Bifidobacterium* is linked to a significantly enhanced encoding of cyclohexadienyl dehydratase in patients with ADHD. This enzyme is involved in the synthesis of phenylalanine, which is a precursor of dopamine. The increase of this enzyme is associated with decreased ventral striatal fMRI responses during reward anticipation. The disruption of these species and its effect on patients with ADHD have been attributed to the gut-brain axis. Thus, our project aims to analyze and compare the gut microbiome levels of *Bifidobacterium* and *Blautia* bacteria between ADHD and non-ADHD patients. 
+|        Two databases will be used, SILVA and RDP, to compare the gut microbiome of patients with ADHD and patients without. Both are databases of quality checked and aligned ribosomal RNA sequence data; the main difference between these two is that SILVA is larger than the RDP database.$^{10,11}$ Therefore using both databases is to ensure that the SILVA database does not overclassify the normalized data. The differences in the results from the two databases will be compared against each other to test for dataset variability and a conclusion will be drawn from the results. 
+
+
+### **Material and Methods**
+##### *Gut Microbiome Datasets of ADHD and Control Patients*
+|        For the analysis of the effect the gut microbiome plays in ADHD, its relation to neural reward anticipation, and its ability to cause other psychopathology affecting diseases to such patients we will be looking at 95 child participants.  It is important to note that pediatric samples were specifically selected because ADHD is generally diagnosed early in childhood, marking adolescence as a crucial time to evaluate the impact of the gut microbiome on the development of ADHD. In this report, we will be analyzing these 95 participants divided into two cohorts obtained via 16S rRNA marker gene sequencing (16S) of 19 ADHD and 76 control participants. Both cohorts were taken from ADHD patients and healthy individuals or unaffected siblings of the ADHD patients in the follow-up of the NeuroIMAGE study in Europe.$^{12}$ The ADHD patients were diagnosed based on DSM-IV symptoms using the Schedule for Affective Disorders and Schizophrenia for School-Age Children.$^{13}$ Fecal samples were collected from each patient and fecal genomic DNA was isolated. DNA purity and quantity were checked using spectrophotometry. The V3-V6 region of the 16S rRNA gene was amplified using PCR and pyrosequencing was done of the hypervariable V3-V4 region of the 16S rRNA gene using Titanium sequencing chemistry with the 454 Life Science GS-FLX platform.
+
+##### *Cleaning and Filtering of Datasets using Vsearch and UCHIME* 
+|        The sequenced data was obtained in FASTQ format on the European Nucleotide Archive under the project ID PRJEB11512. First, the FASTQ files were converted to FASTA format files.Then, vsearch's UCHIME was used for reference based chimera detection. We performed UCHIME on the FASTA files using the SILVA and RDP reference databases. Originally, we planned to use usearch to identify chimeras in our data, however the program required an expensive purchase. Instead, we found vsearch which was created as a free alternative to usearch. Afterwards, the FASTA files were filtered based on the UCHIME output where samples with detected chimeras were excluded from the data. 
+
+```{bash echo = TRUE, eval = FALSE}
+
+#!/bin/bash
+
+cd /scratch/dw2pe/ADHD_Project/fastq
+
+sed -n '1~4s/^@/>/p;2~4p' ERR1100985.fastq  > ERR1100985 
+sed -n '1~4s/^@/>/p;2~4p' ERR1100986.fastq  > ERR1100986
+sed -n '1~4s/^@/>/p;2~4p' ERR1100987.fastq  > ERR1100987
+sed -n '1~4s/^@/>/p;2~4p' ERR1100988.fastq  > ERR1100988
+sed -n '1~4s/^@/>/p;2~4p' ERR1100989.fastq  > ERR1100989
+sed -n '1~4s/^@/>/p;2~4p' ERR1100990.fastq  > ERR1100990
+sed -n '1~4s/^@/>/p;2~4p' ERR1100991.fastq  > ERR1100991
+sed -n '1~4s/^@/>/p;2~4p' ERR1100992.fastq  > ERR1100992
+sed -n '1~4s/^@/>/p;2~4p' ERR1100993.fastq  > ERR1100993
+sed -n '1~4s/^@/>/p;2~4p' ERR1100994.fastq  > ERR1100994
+
+
+sed -n '1~4s/^@/>/p;2~4p' ERR1100995.fastq  > ERR1100995
+sed -n '1~4s/^@/>/p;2~4p' ERR1100996.fastq  > ERR1100996
+sed -n '1~4s/^@/>/p;2~4p' ERR1100997.fastq  > ERR1100997
+sed -n '1~4s/^@/>/p;2~4p' ERR1100998.fastq  > ERR1100998
+sed -n '1~4s/^@/>/p;2~4p' ERR1100999.fastq  > ERR1100999
+sed -n '1~4s/^@/>/p;2~4p' ERR1101000.fastq  > ERR1101000
+sed -n '1~4s/^@/>/p;2~4p' ERR1101001.fastq  > ERR1101001
+sed -n '1~4s/^@/>/p;2~4p' ERR1101002.fastq  > ERR1101002
+sed -n '1~4s/^@/>/p;2~4p' ERR1101003.fastq  > ERR1101003
+sed -n '1~4s/^@/>/p;2~4p' ERR1101004.fastq  > ERR1101004
+
+
+sed -n '1~4s/^@/>/p;2~4p' ERR1101005.fastq  > ERR1101005
+sed -n '1~4s/^@/>/p;2~4p' ERR1101006.fastq  > ERR1101006
+sed -n '1~4s/^@/>/p;2~4p' ERR1101007.fastq  > ERR1101007
+sed -n '1~4s/^@/>/p;2~4p' ERR1101008.fastq  > ERR1101008
+sed -n '1~4s/^@/>/p;2~4p' ERR1101009.fastq  > ERR1101009
+sed -n '1~4s/^@/>/p;2~4p' ERR1101010.fastq  > ERR1101010
+sed -n '1~4s/^@/>/p;2~4p' ERR1101011.fastq  > ERR1101011
+sed -n '1~4s/^@/>/p;2~4p' ERR1101012.fastq  > ERR1101012
+sed -n '1~4s/^@/>/p;2~4p' ERR1101013.fastq  > ERR1101013
+sed -n '1~4s/^@/>/p;2~4p' ERR1101014.fastq  > ERR1101014
+sed -n '1~4s/^@/>/p;2~4p' ERR1101015.fastq  > ERR1101015
+
+
+sed -n '1~4s/^@/>/p;2~4p' ERR1101016.fastq  > ERR1101016
+sed -n '1~4s/^@/>/p;2~4p' ERR1101017.fastq  > ERR1101017
+sed -n '1~4s/^@/>/p;2~4p' ERR1101018.fastq  > ERR1101018
+sed -n '1~4s/^@/>/p;2~4p' ERR1101019.fastq  > ERR1101019
+sed -n '1~4s/^@/>/p;2~4p' ERR1101020.fastq  > ERR1101020
+sed -n '1~4s/^@/>/p;2~4p' ERR1101021.fastq  > ERR1101021
+sed -n '1~4s/^@/>/p;2~4p' ERR1101022.fastq  > ERR1101022
+sed -n '1~4s/^@/>/p;2~4p' ERR1101023.fastq  > ERR1101023
+sed -n '1~4s/^@/>/p;2~4p' ERR1101024.fastq  > ERR1101024
+sed -n '1~4s/^@/>/p;2~4p' ERR1101025.fastq  > ERR1101025
+sed -n '1~4s/^@/>/p;2~4p' ERR1101026.fastq  > ERR1101026
+
+
+sed -n '1~4s/^@/>/p;2~4p' ERR1101027.fastq  > ERR1101027
+sed -n '1~4s/^@/>/p;2~4p' ERR1101028.fastq  > ERR1101028
+sed -n '1~4s/^@/>/p;2~4p' ERR1101029.fastq  > ERR1101029
+sed -n '1~4s/^@/>/p;2~4p' ERR1101030.fastq  > ERR1101030
+sed -n '1~4s/^@/>/p;2~4p' ERR1101031.fastq  > ERR1101031
+sed -n '1~4s/^@/>/p;2~4p' ERR1101032.fastq  > ERR1101032
+sed -n '1~4s/^@/>/p;2~4p' ERR1101033.fastq  > ERR1101033
+sed -n '1~4s/^@/>/p;2~4p' ERR1101034.fastq  > ERR1101034
+sed -n '1~4s/^@/>/p;2~4p' ERR1101035.fastq  > ERR1101035
+sed -n '1~4s/^@/>/p;2~4p' ERR1101036.fastq  > ERR1101036
+sed -n '1~4s/^@/>/p;2~4p' ERR1101037.fastq  > ERR1101037
+
+
+sed -n '1~4s/^@/>/p;2~4p' ERR1101038.fastq  > ERR1101038
+sed -n '1~4s/^@/>/p;2~4p' ERR1101039.fastq  > ERR1101039
+sed -n '1~4s/^@/>/p;2~4p' ERR1101040.fastq  > ERR1101040
+sed -n '1~4s/^@/>/p;2~4p' ERR1101041.fastq  > ERR1101041
+sed -n '1~4s/^@/>/p;2~4p' ERR1101042.fastq  > ERR1101042
+sed -n '1~4s/^@/>/p;2~4p' ERR1101043.fastq  > ERR1101043
+sed -n '1~4s/^@/>/p;2~4p' ERR1101044.fastq  > ERR1101044
+sed -n '1~4s/^@/>/p;2~4p' ERR1101045.fastq  > ERR1101045
+sed -n '1~4s/^@/>/p;2~4p' ERR1101046.fastq  > ERR1101046
+sed -n '1~4s/^@/>/p;2~4p' ERR1101047.fastq  > ERR1101047
+sed -n '1~4s/^@/>/p;2~4p' ERR1101048.fastq  > ERR1101048
+
+
+sed -n '1~4s/^@/>/p;2~4p' ERR1101049.fastq  > ERR1101049
+sed -n '1~4s/^@/>/p;2~4p' ERR1101050.fastq  > ERR1101050
+sed -n '1~4s/^@/>/p;2~4p' ERR1101051.fastq  > ERR1101051
+sed -n '1~4s/^@/>/p;2~4p' ERR1101052.fastq  > ERR1101052
+sed -n '1~4s/^@/>/p;2~4p' ERR1101053.fastq  > ERR1101053
+sed -n '1~4s/^@/>/p;2~4p' ERR1101054.fastq  > ERR1101054
+sed -n '1~4s/^@/>/p;2~4p' ERR1101055.fastq  > ERR1101055
+sed -n '1~4s/^@/>/p;2~4p' ERR1101056.fastq  > ERR1101056
+sed -n '1~4s/^@/>/p;2~4p' ERR1101057.fastq  > ERR1101057
+sed -n '1~4s/^@/>/p;2~4p' ERR1101058.fastq  > ERR1101058
+sed -n '1~4s/^@/>/p;2~4p' ERR1101059.fastq  > ERR1101059
+
+
+sed -n '1~4s/^@/>/p;2~4p' ERR1101060.fastq  > ERR1101060
+sed -n '1~4s/^@/>/p;2~4p' ERR1101061.fastq  > ERR1101061
+sed -n '1~4s/^@/>/p;2~4p' ERR1101062.fastq  > ERR1101062
+sed -n '1~4s/^@/>/p;2~4p' ERR1101063.fastq  > ERR1101063
+sed -n '1~4s/^@/>/p;2~4p' ERR1101064.fastq  > ERR1101064
+sed -n '1~4s/^@/>/p;2~4p' ERR1101065.fastq  > ERR1101065
+sed -n '1~4s/^@/>/p;2~4p' ERR1101066.fastq  > ERR1101066
+sed -n '1~4s/^@/>/p;2~4p' ERR1101067.fastq  > ERR1101067
+sed -n '1~4s/^@/>/p;2~4p' ERR1101068.fastq  > ERR1101068
+sed -n '1~4s/^@/>/p;2~4p' ERR1101069.fastq  > ERR1101069
+sed -n '1~4s/^@/>/p;2~4p' ERR1101070.fastq  > ERR1101070
+
+
+sed -n '1~4s/^@/>/p;2~4p' ERR1101071.fastq  > ERR1101071
+sed -n '1~4s/^@/>/p;2~4p' ERR1101072.fastq  > ERR1101072
+sed -n '1~4s/^@/>/p;2~4p' ERR1101073.fastq  > ERR1101073
+sed -n '1~4s/^@/>/p;2~4p' ERR1101074.fastq  > ERR1101074
+sed -n '1~4s/^@/>/p;2~4p' ERR1101075.fastq  > ERR1101075
+sed -n '1~4s/^@/>/p;2~4p' ERR1101076.fastq  > ERR1101076
+sed -n '1~4s/^@/>/p;2~4p' ERR1101077.fastq  > ERR1101077
+sed -n '1~4s/^@/>/p;2~4p' ERR1101078.fastq  > ERR1101078
+sed -n '1~4s/^@/>/p;2~4p' ERR1101079.fastq  > ERR1101079
+sed -n '1~4s/^@/>/p;2~4p' ERR1101080.fastq  > ERR1101080
+```
+```{bash echo = TRUE, eval = FALSE}
+#!/bin/bash
+#SBATCH --ntasks=1
+#SBATCH --time=6:00:00
+#SBATCH --partition=standard
+#SBATCH --account=bme4550
+#SBATCH --mem=50G
+#SBATCH --cpus-per-task=16
+
+cd /scratch/dw2pe/ADHD_Project_2
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100985 --uchimeout ./original_uchime_silva/ERR1100985_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100986 --uchimeout ./original_uchime_silva/ERR1100986_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100987 --uchimeout ./original_uchime_silva/ERR1100987_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100988 --uchimeout ./original_uchime_silva/ERR1100988_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100989 --uchimeout ./original_uchime_silva/ERR1100989_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100990 --uchimeout ./original_uchime_silva/ERR1100990_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100991 --uchimeout ./original_uchime_silva/ERR1100991_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100992 --uchimeout ./original_uchime_silva/ERR1100992_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100993 --uchimeout ./original_uchime_silva/ERR1100993_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100994 --uchimeout ./original_uchime_silva/ERR1100994_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100995 --uchimeout ./original_uchime_silva/ERR1100995_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100996 --uchimeout ./original_uchime_silva/ERR1100996_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100997 --uchimeout ./original_uchime_silva/ERR1100997_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100998 --uchimeout ./original_uchime_silva/ERR1100998_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100999 --uchimeout ./original_uchime_silva/ERR1100999_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101000 --uchimeout ./original_uchime_silva/ERR1101000_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101001 --uchimeout ./original_uchime_silva/ERR1101001_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101002 --uchimeout ./original_uchime_silva/ERR1101002_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101003 --uchimeout ./original_uchime_silva/ERR1101003_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101004 --uchimeout ./original_uchime_silva/ERR1101004_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101005 --uchimeout ./original_uchime_silva/ERR1101005_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101006 --uchimeout ./original_uchime_silva/ERR1101006_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101007 --uchimeout ./original_uchime_silva/ERR1101007_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101008 --uchimeout ./original_uchime_silva/ERR1101008_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101009 --uchimeout ./original_uchime_silva/ERR1101009_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101010 --uchimeout ./original_uchime_silva/ERR1101010_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101011 --uchimeout ./original_uchime_silva/ERR1101011_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101012 --uchimeout ./original_uchime_silva/ERR1101012_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101013 --uchimeout ./original_uchime_silva/ERR1101013_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101014 --uchimeout ./original_uchime_silva/ERR1101014_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101015 --uchimeout ./original_uchime_silva/ERR1101015_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101016 --uchimeout ./original_uchime_silva/ERR1101016_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101017 --uchimeout ./original_uchime_silva/ERR1101017_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101018 --uchimeout ./original_uchime_silva/ERR1101018_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101019 --uchimeout ./original_uchime_silva/ERR1101019_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101020 --uchimeout ./original_uchime_silva/ERR1101020_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101021 --uchimeout ./original_uchime_silva/ERR1101021_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101022 --uchimeout ./original_uchime_silva/ERR1101022_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101023 --uchimeout ./original_uchime_silva/ERR1101023_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101024 --uchimeout ./original_uchime_silva/ERR1101024_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101025 --uchimeout ./original_uchime_silva/ERR1101025_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101026 --uchimeout ./original_uchime_silva/ERR1101026_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101027 --uchimeout ./original_uchime_silva/ERR1101027_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101028 --uchimeout ./original_uchime_silva/ERR1101028_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101029 --uchimeout ./original_uchime_silva/ERR1101029_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101030 --uchimeout ./original_uchime_silva/ERR1101030_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101031 --uchimeout ./original_uchime_silva/ERR1101031_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101032 --uchimeout ./original_uchime_silva/ERR1101032_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101033 --uchimeout ./original_uchime_silva/ERR1101033_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101034 --uchimeout ./original_uchime_silva/ERR1101034_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101035 --uchimeout ./original_uchime_silva/ERR1101035_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101036 --uchimeout ./original_uchime_silva/ERR1101036_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101037 --uchimeout ./original_uchime_silva/ERR1101037_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101038 --uchimeout ./original_uchime_silva/ERR1101038_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101039 --uchimeout ./original_uchime_silva/ERR1101039_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101040 --uchimeout ./original_uchime_silva/ERR1101040_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101041 --uchimeout ./original_uchime_silva/ERR1101041_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101042 --uchimeout ./original_uchime_silva/ERR1101042_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101043 --uchimeout ./original_uchime_silva/ERR1101043_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101044 --uchimeout ./original_uchime_silva/ERR1101044_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101045 --uchimeout ./original_uchime_silva/ERR1101045_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101046 --uchimeout ./original_uchime_silva/ERR1101046_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101047 --uchimeout ./original_uchime_silva/ERR1101047_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101048 --uchimeout ./original_uchime_silva/ERR1101048_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101049 --uchimeout ./original_uchime_silva/ERR1101049_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101050 --uchimeout ./original_uchime_silva/ERR1101050_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101051 --uchimeout ./original_uchime_silva/ERR1101051_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101052 --uchimeout ./original_uchime_silva/ERR1101052_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101053 --uchimeout ./original_uchime_silva/ERR1101053_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101054 --uchimeout ./original_uchime_silva/ERR1101054_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101055 --uchimeout ./original_uchime_silva/ERR1101055_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101056 --uchimeout ./original_uchime_silva/ERR1101056_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101057 --uchimeout ./original_uchime_silva/ERR1101057_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101058 --uchimeout ./original_uchime_silva/ERR1101058_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101059 --uchimeout ./original_uchime_silva/ERR1101059_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101060 --uchimeout ./original_uchime_silva/ERR1101060_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101061 --uchimeout ./original_uchime_silva/ERR1101061_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101062 --uchimeout ./original_uchime_silva/ERR1101062_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101063 --uchimeout ./original_uchime_silva/ERR1101063_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101064 --uchimeout ./original_uchime_silva/ERR1101064_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101065 --uchimeout ./original_uchime_silva/ERR1101065_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101066 --uchimeout ./original_uchime_silva/ERR1101066_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101067 --uchimeout ./original_uchime_silva/ERR1101067_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101068 --uchimeout ./original_uchime_silva/ERR1101068_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101069 --uchimeout ./original_uchime_silva/ERR1101069_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101070 --uchimeout ./original_uchime_silva/ERR1101070_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101071 --uchimeout ./original_uchime_silva/ERR1101071_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101072 --uchimeout ./original_uchime_silva/ERR1101072_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101073 --uchimeout ./original_uchime_silva/ERR1101073_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101074 --uchimeout ./original_uchime_silva/ERR1101074_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101075 --uchimeout ./original_uchime_silva/ERR1101075_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101076 --uchimeout ./original_uchime_silva/ERR1101076_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101077 --uchimeout ./original_uchime_silva/ERR1101077_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101078 --uchimeout ./original_uchime_silva/ERR1101078_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101079 --uchimeout ./original_uchime_silva/ERR1101079_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101080 --uchimeout ./original_uchime_silva/ERR1101080_uchime_out_silva --db SSURef_111_NR_tax_silva.fasta
+
+```
+```{bash echo = TRUE, eval = FALSE}
+#!/bin/bash
+
+cd /scratch/dw2pe/ADHD_Project_2
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100985 --uchimeout ./original_uchime/ERR1100985_uchime_out_rdp --db trainset16_022016.rdp.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100986 --uchimeout ./original_uchime/ERR1100986_uchime_out_rdp --db trainset16_022016.rdp.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100987 --uchimeout ./original_uchime/ERR1100987_uchime_out_rdp --db trainset16_022016.rdp.fasta
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100988 --uchimeout ./original_uchime/ERR1100988_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100989 --uchimeout ./original_uchime/ERR1100989_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100990 --uchimeout ./original_uchime/ERR1100990_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100991 --uchimeout ./original_uchime/ERR1100991_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100992 --uchimeout ./original_uchime/ERR1100992_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100993 --uchimeout ./original_uchime/ERR1100993_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100994 --uchimeout ./original_uchime/ERR1100994_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100995 --uchimeout ./original_uchime/ERR1100995_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100996 --uchimeout ./original_uchime/ERR1100996_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100997 --uchimeout ./original_uchime/ERR1100997_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100998 --uchimeout ./original_uchime/ERR1100998_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1100999 --uchimeout ./original_uchime/ERR1100999_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101000 --uchimeout ./original_uchime/ERR1101000_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101001 --uchimeout ./original_uchime/ERR1101001_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101002 --uchimeout ./original_uchime/ERR1101002_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101003 --uchimeout ./original_uchime/ERR1101003_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101004 --uchimeout ./original_uchime/ERR1101004_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101005 --uchimeout ./original_uchime/ERR1101005_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101006 --uchimeout ./original_uchime/ERR1101006_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101007 --uchimeout ./original_uchime/ERR1101007_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101008 --uchimeout ./original_uchime/ERR1101008_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101009 --uchimeout ./original_uchime/ERR1101009_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101010 --uchimeout ./original_uchime/ERR1101010_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101011 --uchimeout ./original_uchime/ERR1101011_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101012 --uchimeout ./original_uchime/ERR1101012_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101013 --uchimeout ./original_uchime/ERR1101013_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101014 --uchimeout ./original_uchime/ERR1101014_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101015 --uchimeout ./original_uchime/ERR1101015_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101016 --uchimeout ./original_uchime/ERR1101016_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101017 --uchimeout ./original_uchime/ERR1101017_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101018 --uchimeout ./original_uchime/ERR1101018_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101019 --uchimeout ./original_uchime/ERR1101019_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101020 --uchimeout ./original_uchime/ERR1101020_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101021 --uchimeout ./original_uchime/ERR1101021_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101022 --uchimeout ./original_uchime/ERR1101022_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101023 --uchimeout ./original_uchime/ERR1101023_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101024 --uchimeout ./original_uchime/ERR1101024_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101025 --uchimeout ./original_uchime/ERR1101025_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101026 --uchimeout ./original_uchime/ERR1101026_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101027 --uchimeout ./original_uchime/ERR1101027_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101028 --uchimeout ./original_uchime/ERR1101028_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101029 --uchimeout ./original_uchime/ERR1101029_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101030 --uchimeout ./original_uchime/ERR1101030_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101031 --uchimeout ./original_uchime/ERR1101031_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101032 --uchimeout ./original_uchime/ERR1101032_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101033 --uchimeout ./original_uchime/ERR1101033_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101034 --uchimeout ./original_uchime/ERR1101034_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101035 --uchimeout ./original_uchime/ERR1101035_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101036 --uchimeout ./original_uchime/ERR1101036_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101037 --uchimeout ./original_uchime/ERR1101037_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101038 --uchimeout ./original_uchime/ERR1101038_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101039 --uchimeout ./original_uchime/ERR1101039_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101040 --uchimeout ./original_uchime/ERR1101040_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101041 --uchimeout ./original_uchime/ERR1101041_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101042 --uchimeout ./original_uchime/ERR1101042_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101043 --uchimeout ./original_uchime/ERR1101043_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101044 --uchimeout ./original_uchime/ERR1101044_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101045 --uchimeout ./original_uchime/ERR1101045_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101046 --uchimeout ./original_uchime/ERR1101046_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101047 --uchimeout ./original_uchime/ERR1101047_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101048 --uchimeout ./original_uchime/ERR1101048_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101049 --uchimeout ./original_uchime/ERR1101049_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101050 --uchimeout ./original_uchime/ERR1101050_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101051 --uchimeout ./original_uchime/ERR1101051_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101052 --uchimeout ./original_uchime/ERR1101052_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101053 --uchimeout ./original_uchime/ERR1101053_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101054 --uchimeout ./original_uchime/ERR1101054_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101055 --uchimeout ./original_uchime/ERR1101055_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101056 --uchimeout ./original_uchime/ERR1101056_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101057 --uchimeout ./original_uchime/ERR1101057_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101058 --uchimeout ./original_uchime/ERR1101058_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101059 --uchimeout ./original_uchime/ERR1101059_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101060 --uchimeout ./original_uchime/ERR1101060_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101061 --uchimeout ./original_uchime/ERR1101061_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101062 --uchimeout ./original_uchime/ERR1101062_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101063 --uchimeout ./original_uchime/ERR1101063_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101064 --uchimeout ./original_uchime/ERR1101064_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101065 --uchimeout ./original_uchime/ERR1101065_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101066 --uchimeout ./original_uchime/ERR1101066_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101067 --uchimeout ./original_uchime/ERR1101067_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101068 --uchimeout ./original_uchime/ERR1101068_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101069 --uchimeout ./original_uchime/ERR1101069_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101070 --uchimeout ./original_uchime/ERR1101070_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+
+
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101071 --uchimeout ./original_uchime/ERR1101071_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101072 --uchimeout ./original_uchime/ERR1101072_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101073 --uchimeout ./original_uchime/ERR1101073_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101074 --uchimeout ./original_uchime/ERR1101074_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101075 --uchimeout ./original_uchime/ERR1101075_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101076 --uchimeout ./original_uchime/ERR1101076_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101077 --uchimeout ./original_uchime/ERR1101077_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101078 --uchimeout ./original_uchime/ERR1101078_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101079 --uchimeout ./original_uchime/ERR1101079_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+./vsearch-2.14.2-linux-x86_64/bin/vsearch --uchime_ref ./original_fasta/ERR1101080 --uchimeout ./original_uchime/ERR1101080_uchime_out_rdp --db trainset16_022016.rdp.fasta 
+
+```
+```{bash echo = TRUE, eval = FALSE}
+#!/bin/bash
+#SBATCH --ntasks=1
+#SBATCH --time=6:00:00
+#SBATCH --partition=standard
+#SBATCH --account=bme4550
+#SBATCH --mem=50G
+#SBATCH --cpus-per-task=16
+
+
+# original files directories
+dir="/scratch/dw2pe/ADHD_Project_2"
+filter_dir="${dir}/original_uchime_silva"
+input_dir="${dir}/original_fasta"
+output_dir="${dir}/output"
+
+# intermediate directories
+gene_names="${dir}/gene_name_filters"
+clean_fasta="${dir}/fasta_cleaned"
+
+# list of files
+filter_files_1=`ls -t ${filter_dir}`
+filter_files_2=`ls -t ${gene_names}`
+input_files_1=`ls -t ${input_dir}`
+input_files_2=`ls -t ${clean_fasta}`
+
+
+# gets the uchime output gene names with Y in column 18
+for file in $filter_files_1
+  do 
+    filepath="${filter_dir}/${file}"
+    awk '$18 != "Y" {print}' $filepath | cut -f 2 > ${gene_names}/${file}.genes
+  done
+
+# cleans up fasta files for filtering (makes the sequence and geneid in one line and gets rid of )
+for file in $input_files_1
+  do
+    filepath="${input_dir}/${file}"
+    sed 'N;s/\n/ /' $filepath | sed 's/^>//' > ${clean_fasta}/${file}
+  done
+
+exit
+
+# filters the fasta files using the gene name from uchime output
+for file in $input_files_2
+  do
+    filepath="${clean_fasta}/${file}"
+    while IFS= read -r keyword
+        do
+          awk  -v key="$keyword" '$1 == key {print}' $filepath >> ${output_dir}/${file}_filtered_silva.fasta
+        done < ${gene_names}/${file}_uchime_out_silva.genes
+  done
+
+```
+```{bash echo = TRUE, eval = FALSE}
+#!/bin/bash
+#SBATCH --ntasks=1
+#SBATCH --time=6:00:00
+#SBATCH --partition=standard
+#SBATCH --account=bme4550
+#SBATCH --mem=50G
+#SBATCH --cpus-per-task=16
+
+
+# original files directories
+dir="/scratch/dw2pe/ADHD_Project_2"
+filter_dir="${dir}/original_uchime"
+input_dir="${dir}/original_fasta"
+output_dir="${dir}/output"
+
+# intermediate directories
+gene_names="${dir}/gene_name_filters"
+clean_fasta="${dir}/fasta_cleaned"
+
+# list of files
+filter_files_1=`ls -t ${filter_dir}`
+filter_files_2=`ls -t ${gene_names}`
+input_files_1=`ls -t ${input_dir}`
+input_files_2=`ls -t ${clean_fasta}`
+
+
+# gets the uchime output gene names with Y in column 18
+for file in $filter_files_1
+  do 
+    filepath="${filter_dir}/${file}"
+    awk '$18 != "Y" {print}' $filepath | cut -f 2 > ${gene_names}/${file}.genes
+  done
+
+# cleans up fasta files for filtering (makes the sequence and geneid in one line and gets rid of )
+for file in $input_files_1
+  do
+    filepath="${input_dir}/${file}"
+    sed 'N;s/\n/ /' $filepath | sed 's/^>//' > ${clean_fasta}/${file}
+  done
+
+
+
+# filters the fasta files using the gene name from uchime output
+for file in $input_files_2
+  do
+    filepath="${clean_fasta}/${file}"
+    while IFS= read -r keyword
+        do
+          awk  -v key="$keyword" '$1 == key {print}' $filepath >> ${output_dir}/${file}_filtered_rdp.fasta
+        done < ${gene_names}/${file}_uchime_out_rdp.genes
+  done
+
+```
+```{bash echo = TRUE, eval = FALSE}
+#!/bin/bash
+#SBATCH --ntasks=1
+#SBATCH --time=6:00:00
+#SBATCH --partition=standard
+#SBATCH --account=bme4550
+#SBATCH --mem=20G
+#SBATCH --cpus-per-task=16
+
+dir="/scratch/dw2pe/ADHD_Project_2"
+
+rdp_dir="${dir}/output/rdp"
+silva_dir="${dir}/output/silva"
+rdp_out_dir="${dir}/output_2/rdp"
+silva_out_dir="${dir}/output_2/silva"
+
+rdp_files=`ls -t ${rdp_dir}`
+silva_files=`ls -t ${silva_dir}`
+
+for file in $rdp_files
+  do
+    filepath="${rdp_dir}/${file}"
+    sed 's/^/>/' $filepath > ${rdp_out_dir}/${file}
+  done
+
+for file in $silva_files
+  do
+    filepath="${silva_dir}/${file}"
+    sed 's/^/>/' $filepath > ${silva_out_dir}/${file}
+  done
+
+dir="/scratch/dw2pe/ADHD_Project_2"
+
+rdp_dir="${dir}/output_2/rdp"
+silva_dir="${dir}/output_2/silva"
+rdp_out_dir="${dir}/output_3/rdp"
+silva_out_dir="${dir}/output_3/silva"
+
+rdp_files=`ls -t ${rdp_dir}`
+silva_files=`ls -t ${silva_dir}`
+
+for file in $rdp_files
+  do
+    filepath="${rdp_dir}/${file}"
+    sort -n -k 2,2 $filepath | awk '{print $1,$2"\n"$3}' > ${rdp_out_dir}/${file}
+  done
+
+for file in $silva_files
+  do
+    filepath="${silva_dir}/${file}"
+    sort -n -k 2,2 $filepath | awk '{print $1,$2"\n"$3}' > ${silva_out_dir}/${file}
+  done
+
+```
+
+
+##### *Alignment to Reference Databases*
+|        The filtered and cleaned FASTA files were then aligned to the SILVA rRNA database using the SILVA INcremental Aligner (SINA), a local installation of the SILVA ACT tool. This also allowed for taxonomic classification of the FASTA files to both the SILVA and Ribosomal Database Project (RDP) reference databases. The classification by SINA resulted in the operational taxonomic units (OTUs) relative to each sequence within each sequenced FASTA file. OTUs are clusters of similar sequence variants used to categorize bacteria based on sequence similarity. The OTU data obtained from SINA was stored in a .csv file format to then be processed using in-house developed R scripts. 
+
+```{bash echo = TRUE, eval = FALSE}
+#!/bin/bash
+#SBATCH --ntasks=1
+#SBATCH --time=6:00:00
+#SBATCH --partition=standard
+#SBATCH --account=bme4550
+#SBATCH --mem=50G
+#SBATCH --cpus-per-task=16
+
+source activate sina
+
+cd /scratch/ddp6mn/bme4550_proj/RDP_filtered
+
+for i in *.fasta
+do
+sina -i $i -o /scratch/ddp6mn/bme4550_proj/RDP_aligned_classified/${i}_ac.fasta -r /scratch/ddp6mn/bme4550_proj/SILVA_138_SSURef_NR99_05_01_20_opt.arb --meta-fmt=csv --search --lca-fields=tax_rdp
+done
+```
+```{bash echo = TRUE, eval = FALSE}
+#!/bin/bash
+#SBATCH --ntasks=1
+#SBATCH --time=6:00:00
+#SBATCH --partition=standard
+#SBATCH --account=bme4550
+#SBATCH --mem=50G
+#SBATCH --cpus-per-task=16
+
+source activate sina
+
+cd /scratch/ddp6mn/bme4550_proj/SILVA_filtered
+
+for i in *.fasta
+do
+sina -i $i -o /scratch/ddp6mn/bme4550_proj/SILVA_aligned_classified/${i}_ac.fasta -r /scratch/ddp6mn/bme4550_proj/SILVA_138_SSURef_NR99_05_01_20_opt.arb --meta-fmt=csv --search --lca-fields=tax_slv
+done
+```
+
+##### *Data Processing and Visualization*
+|        The classified OTU data obtained in .csv format via the SINA tool was then processed in R, to obtain total and relative abundance values for the genera and phylum classifications. First, the data was separated relative to the databases used for classification (SILVA and RDP) and disorder condition (ADHD v. Control). Next, the files for each specific separation (e.g. SILVA - ADHD) were uploaded to R and preprocessed using various data munging and manipulation libraries. This included reformatting the OTU data into three tables to then create a phyloseq object in R. These tables included an OTU table with total abundance values, a taxonomic breakdown table for each OTU, and a sample table with variables defining each sample. Phyloseq in R is a tool to import, store, analyze, and graphically display complex phylogenetic sequencing data that has already been clustered into OTUs. After the creation of a phyloseq object, the data was then normalized to the median sequencing read depth, which indicates how many reads, on average, are likely to be aligned at a given reference base position. The normalized data was then filtered for OTUs that did not have a total number of read counts summed over all samples greater than 150, which was determined based off of the 3rd quartile of total read count values. From the normalized and filter data, the relative abundance of each uniquely classified OTU was calculated for downstream statistical analysis. 
+|        Visualization of the SILVA classified data was also performed in R using the phyloseq and ggplot2 tools. The phyloseq formatted total OTU abundance tables were then plotted as heatmaps to show the top genera taxa for each sample within each condition (ADHD v. Control) relative to the SILVA taxonomic classification. This was followed with analysis of the richness and diversity of each sample, using alpha diversity plots coupled with the Chao1 richness and Shannon diversity estimators. 
+
+```{r echo = TRUE, eval = FALSE}
+# SILVA - ADHD Analysis R Script 
+
+#loading libraries
+
+library(ggplot2)
+library(tidyverse)
+library(rafalib)
+library(devtools)
+library(RColorBrewer)
+library(gplots)
+library(downloader)
+library(genefilter)
+library(SpikeInSubset)
+library(RCy3)
+library(readr)
+library(dplyr)
+library(stringr)
+library(ape)
+library(igraph)
+library(phytools)
+library(phyclust)
+library(metacoder)
+library(taxize)
+library(HMPTrees)
+library(plyr)
+library(phyloseq)
+
+# Taxonomic filtering
+
+# List of files from local directory (SILVA-ADHD)
+files = list.files(path = "/Users/dhyeyparikh/MyData/6th_Semester/BME_4550/Project/silva/ADHD", pattern = "*.csv", full.names = T)
+
+# Taxonomy Column Names
+into_var = c("domain", "phylum", "class", "order", "family", "genus")
+
+# Aggregate lists of OTUs
+otu_list = list() 
+
+# Loop to generate OTUs column for aggregation
+for (i in files) {
+  tbl = sapply(i, read_csv, simplify=FALSE) %>% 
+    bind_rows(.id = "id")
+  
+  tax_col = tbl[,9]
+  
+  otu_count_table = as.data.frame(table(tax_col))
+  otu_count_table = otu_count_table[order(otu_count_table$Freq, decreasing = TRUE),]
+  otu_list[[i]] = otu_count_table
+
+}
+
+# Aggregation of OTUs from all samples
+otu_big_data = reduce(otu_list, full_join, by = "tax_col")
+otu_big_data[is.na(otu_big_data)] = 0
+colnames(otu_big_data)[1] = c("OTUs")
+for (i in 2:ncol(otu_big_data)) {
+  col_name_otu = paste("ADHD: Sample", i-1)
+  colnames(otu_big_data)[i] = col_name_otu
+}
+
+# Taxonomic table breakdown from OTUs --> K, P, C, O, F, G
+tax_table = data.frame(matrix(ncol = 6, nrow = 0))
+colnames(tax_table) = into_var
+
+for (i in 1:nrow(otu_big_data)) {
+  count = str_count(otu_big_data[i,1] , ';')
+  if (count == 5) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i,1]), 1, into_var[c(1, 2, 3, 4, 5, 6)], sep = ";")
+    new_row_tax[new_row_tax == ""] = paste("Unclassified genus:", new_row_tax$family)
+  } 
+  else if (count == 6) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i, 1]), 1, into_var, sep = ";")
+  } 
+  
+  
+  tax_table = rbind.fill(tax_table, new_row_tax)
+}
+
+tax_table = cbind(as.data.frame(otu_big_data[,1]), tax_table)
+colnames(tax_table)[1] = "OTUs"
+
+# Reformatting tables for phyloseq
+otus_vec = vector()
+
+for (i in 1:nrow(otu_big_data)) {
+  val = paste("OTU", i)
+  otus_vec = c(otus_vec, val)
+}
+
+otus_vec = as.data.frame(otus_vec)
+otu_big_data[,1] = otus_vec
+tax_table[,1] = otus_vec
+
+# Creation of sample table for phyloseq
+samples_mat = data.frame(matrix(ncol = 4, nrow = 19))
+colnames(samples_mat) = c("Sample", "Type", "Instrument Model", "Scientific Name")
+for (i in 1:nrow(samples_mat)) {
+  samples_mat[i,1] = paste("ADHD: Sample", i)
+}
+samples_mat[,2] = "case"
+samples_mat[,3] = "454 GS FLX"
+samples_mat[,4] = "Homo Sapiens"
+
+# 1st column binding to row names
+row.names(otu_big_data) = otu_big_data$OTUs
+otu_big_data = otu_big_data %>% select (-OTUs) 
+row.names(tax_table) = tax_table$OTUs
+tax_table = tax_table %>% select (-OTUs) 
+row.names(samples_mat) = samples_mat$Sample
+samples_mat = samples_mat %>% select (-Sample) 
+
+# Convert tables to matricies
+otu_big_data = as.matrix(otu_big_data)
+tax_table = as.matrix(tax_table)
+
+# Converting matricies to phyloseq objects
+OTU = otu_table(otu_big_data, taxa_are_rows = TRUE)
+TAX = tax_table(tax_table)
+samples = sample_data(samples_mat)
+carbom = phyloseq(OTU, TAX, samples)
+
+# Normalize number of reads in each sample using median sequencing depth and relative abundance phyloseq object
+total = median(sample_sums(carbom))
+standf = function(x, t=total) round(t * (x / sum(x)))
+carbom = transform_sample_counts(carbom, standf)
+carbom_clean = prune_taxa(taxa_sums(carbom)>150, carbom)
+carbom_ra = transform_sample_counts(carbom_clean, function(x) x/sum(x))
+
+# Genera Analysis 
+genus_taxa = tax_glom(carbom_clean, taxrank = "genus")
+genus_taxa_sort = as.data.frame(names(sort(taxa_sums(genus_taxa), TRUE)[1:5]))
+genus_top_sums = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(genus_taxa_sort)) {
+  genus_taxa_sort_aval = sum(as.data.frame(get_sample(genus_taxa, toString(genus_taxa_sort[i,1]))))
+  genus_top_sums[i,1] = genus_taxa_sort_aval
+  rownames(genus_top_sums)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(genus_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "genus"]
+}
+OTU_table_ra_genus = as.data.frame(otu_table(carbom_ra))
+OTU_table_ra_means_genus = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(genus_taxa_sort)) {
+  taxa_ra_mean = rowMeans(OTU_table_ra_genus[row.names(OTU_table_ra_genus) == toString(genus_taxa_sort[i,1]), ])
+  OTU_table_ra_means_genus[i,1] = taxa_ra_mean
+  rownames(OTU_table_ra_means_genus)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(genus_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "genus"]
+}
+
+# Phylum analysis
+phylum_taxa = tax_glom(carbom_clean, taxrank = "phylum")
+phylum_taxa_sort = as.data.frame(names(sort(taxa_sums(phylum_taxa), TRUE)[1:5]))
+phylum_top_sums = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(phylum_taxa_sort)) {
+  phylum_taxa_sort_aval = sum(as.data.frame(get_sample(phylum_taxa, toString(phylum_taxa_sort[i,1]))))
+  phylum_top_sums[i,1] = phylum_taxa_sort_aval
+  rownames(phylum_top_sums)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(phylum_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "phylum"]
+}
+OTU_table_ra_phylum = as.data.frame(otu_table(carbom_ra))
+OTU_table_ra_means_phylum = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(phylum_taxa_sort)) {
+  taxa_ra_meanP = rowMeans(OTU_table_ra_phylum[row.names(OTU_table_ra_phylum) == toString(phylum_taxa_sort[i,1]), ])
+  OTU_table_ra_means_phylum[i,1] = taxa_ra_meanP
+  rownames(OTU_table_ra_means_phylum)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(phylum_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "phylum"]
+}
+
+# Heatmap of OTUs that represent at least 20% of reads in at least one sample
+carbom_abund = filter_taxa(carbom_clean, function(x) sum(x > total*0.20) > 0, TRUE)
+plot_heatmap(carbom_abund, method = "MDS", distance = "bray", title = "Top Genera Taxa in ADHD Case Samples",taxa.label = "genus", taxa.order = "genus", trans=NULL, low="lightblue", high="blue", na.value="lightblue") 
+
+# Alpha diversity plot of OTUs
+plot_richness(carbom_abund, measures=c("Chao1", "Shannon"), title = "Alpha Diversity Plots for Top Genera Taxa in ADHD Case Samples")
+
+```
+
+```{r echo = TRUE, eval = FALSE}
+# SILVA - Control Analysis R Script 
+
+#loading libraries
+
+library(ggplot2)
+library(tidyverse)
+library(rafalib)
+library(devtools)
+library(RColorBrewer)
+library(gplots)
+library(downloader)
+library(genefilter)
+library(SpikeInSubset)
+library(RCy3)
+library(readr)
+library(dplyr)
+library(stringr)
+library(ape)
+library(igraph)
+library(phytools)
+library(phyclust)
+library(metacoder)
+library(taxize)
+library(HMPTrees)
+library(plyr)
+library(phyloseq)
+
+# Taxonomic filtering
+
+# List of files from local directory (SILVA-ADHD)
+files = list.files(path = "/Users/dhyeyparikh/MyData/6th_Semester/BME_4550/Project/silva/Control", pattern = "*.csv", full.names = T)
+
+# Taxonomy Column Names
+into_var = c("domain", "phylum", "class", "order", "family", "genus")
+
+# Aggregate lists of OTUs
+otu_list = list() 
+
+# Loop to generate OTUs column for aggregation
+for (i in files) {
+  tbl = sapply(i, read_csv, simplify=FALSE) %>% 
+    bind_rows(.id = "id")
+  
+  tax_col = tbl[,9]
+  
+  otu_count_table = as.data.frame(table(tax_col))
+  otu_count_table = otu_count_table[order(otu_count_table$Freq, decreasing = TRUE),]
+  otu_list[[i]] = otu_count_table
+  
+}
+
+# Aggregation of OTUs from all samples
+otu_big_data = reduce(otu_list, full_join, by = "tax_col")
+otu_big_data[is.na(otu_big_data)] = 0
+colnames(otu_big_data)[1] =c("OTUs")
+for (i in 2:ncol(otu_big_data)) {
+  col_name_otu = paste("Control: Sample", i-1)
+  colnames(otu_big_data)[i] = col_name_otu
+}
+
+# Taxonomic table breakdown from OTUs --> K, P, C, O, F, G
+tax_table = data.frame(matrix(ncol = 6, nrow = 0))
+colnames(tax_table) = into_var
+
+for (i in 1:nrow(otu_big_data)) {
+  count = str_count(otu_big_data[i,1] , ';')
+  if (count == 5) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i,1]), 1, into_var[c(1, 2, 3, 4, 5, 6)], sep = ";")
+    new_row_tax[new_row_tax == ""] = paste("Unclassified genus:", new_row_tax$family)
+  } 
+  else if (count == 6) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i, 1]), 1, into_var, sep = ";")
+  } 
+  
+  tax_table = rbind.fill(tax_table, new_row_tax)
+  
+}
+
+tax_table = cbind(as.data.frame(otu_big_data[,1]), tax_table)
+colnames(tax_table)[1] = "OTUs"
+
+# Reformatting tables for phyloseq
+otus_vec = vector()
+
+for (i in 1:nrow(otu_big_data)) {
+  val = paste("OTU", i)
+  otus_vec = c(otus_vec, val)
+}
+
+otus_vec = as.data.frame(otus_vec)
+otu_big_data[,1] = otus_vec
+tax_table[,1] = otus_vec
+
+# Creation of sample table for phyloseq
+samples_mat = data.frame(matrix(ncol = 4, nrow = 76))
+colnames(samples_mat) = c("Sample", "Type", "Instrument Model", "Scientific Name")
+for (i in 1:nrow(samples_mat)) {
+  samples_mat[i,1] = paste("Control: Sample", i)
+}
+samples_mat[,2] = "case"
+samples_mat[,3] = "454 GS FLX"
+samples_mat[,4] = "Homo Sapiens"
+
+# 1st column binding to row names
+row.names(otu_big_data) = otu_big_data$OTUs
+otu_big_data = otu_big_data %>% select (-OTUs) 
+row.names(tax_table) = tax_table$OTUs
+tax_table = tax_table %>% select (-OTUs) 
+row.names(samples_mat) = samples_mat$Sample
+samples_mat = samples_mat %>% select (-Sample) 
+
+# Convert tables to matricies
+otu_big_data = as.matrix(otu_big_data)
+tax_table = as.matrix(tax_table)
+
+# Converting matricies to phyloseq objects
+OTU = otu_table(otu_big_data, taxa_are_rows = TRUE)
+TAX = tax_table(tax_table)
+samples = sample_data(samples_mat)
+carbom <- phyloseq(OTU, TAX, samples)
+
+# Normalize number of reads in each sample using median sequencing depth and relative abundance phyloseq object
+total = median(sample_sums(carbom))
+standf = function(x, t=total) round(t * (x / sum(x)))
+carbom = transform_sample_counts(carbom, standf)
+carbom_clean = prune_taxa(taxa_sums(carbom)>150, carbom)
+carbom_ra = transform_sample_counts(carbom_clean, function(x) x/sum(x))
+
+# Genera Analysis 
+genus_taxa = tax_glom(carbom_clean, taxrank = "genus")
+genus_taxa_sort = as.data.frame(names(sort(taxa_sums(genus_taxa), TRUE)[1:5]))
+genus_top_sums = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(genus_taxa_sort)) {
+  genus_taxa_sort_aval = sum(as.data.frame(get_sample(genus_taxa, toString(genus_taxa_sort[i,1]))))
+  genus_top_sums[i,1] = genus_taxa_sort_aval
+  rownames(genus_top_sums)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(genus_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "genus"]
+}
+OTU_table_ra_genus = as.data.frame(otu_table(carbom_ra))
+OTU_table_ra_means_genus = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(genus_taxa_sort)) {
+  taxa_ra_mean = rowMeans(OTU_table_ra_genus[row.names(OTU_table_ra_genus) == toString(genus_taxa_sort[i,1]), ])
+  OTU_table_ra_means_genus[i,1] = taxa_ra_mean
+  rownames(OTU_table_ra_means_genus)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(genus_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "genus"]
+}
+
+# Phylum analysis
+phylum_taxa = tax_glom(carbom_clean, taxrank = "phylum")
+phylum_taxa_sort = as.data.frame(names(sort(taxa_sums(phylum_taxa), TRUE)[1:5]))
+phylum_top_sums = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(phylum_taxa_sort)) {
+  phylum_taxa_sort_aval = sum(as.data.frame(get_sample(phylum_taxa, toString(phylum_taxa_sort[i,1]))))
+  phylum_top_sums[i,1] = phylum_taxa_sort_aval
+  rownames(phylum_top_sums)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(phylum_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "phylum"]
+}
+OTU_table_ra_phylum = as.data.frame(otu_table(carbom_ra))
+OTU_table_ra_means_phylum = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(phylum_taxa_sort)) {
+  taxa_ra_meanP = rowMeans(OTU_table_ra_phylum[row.names(OTU_table_ra_phylum) == toString(phylum_taxa_sort[i,1]), ])
+  OTU_table_ra_means_phylum[i,1] = taxa_ra_meanP
+  rownames(OTU_table_ra_means_phylum)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(phylum_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "phylum"]
+}
+
+# Heatmap of OTUs that represent at least 20% of reads in at least one sample
+carbom_abund = filter_taxa(carbom_clean, function(x) sum(x > total*0.20) > 0, TRUE)
+plot_heatmap(carbom_abund, method = "MDS", distance = "bray", title = "Top Genera Taxa in ADHD Control Samples",taxa.label = "genus", taxa.order = "genus", trans=NULL, low="lightblue", high="blue", na.value="lightblue") 
+
+# Alpha diversity plot of OTUs
+plot_richness(carbom_abund, measures=c("Chao1", "Shannon"), title = "Alpha Diversity Plots for Top Genera Taxa in ADHD Control Samples")
+
+```
+
+```{r echo = TRUE, eval = FALSE}
+# RDP - ADHD Analysis R Script 
+
+#loading libraries
+
+library(ggplot2)
+library(tidyverse)
+library(rafalib)
+library(devtools)
+library(RColorBrewer)
+library(gplots)
+library(downloader)
+library(genefilter)
+library(SpikeInSubset)
+library(RCy3)
+library(readr)
+library(dplyr)
+library(stringr)
+library(ape)
+library(igraph)
+library(phytools)
+library(phyclust)
+library(metacoder)
+library(taxize)
+library(HMPTrees)
+library(plyr)
+library(phyloseq)
+
+# Taxonomic filtering
+
+# List of files from local directory (SILVA-ADHD)
+files = list.files(path = "/Users/dhyeyparikh/MyData/6th_Semester/BME_4550/Project/rdp/ADHD", pattern = "*.csv", full.names = T)
+
+# Taxonomy Column Names
+into_var = c("domain", "phylum", "class", "subclass", "order", "suborder", "family", "genus")
+
+# Aggregate lists of OTUs
+otu_list = list() 
+
+# Loop to generate OTUs column for aggregation
+for (i in files) {
+  tbl = sapply(i, read_csv, simplify=FALSE) %>% 
+    bind_rows(.id = "id")
+  
+  tax_col = tbl[,9]
+  
+  otu_count_table = as.data.frame(table(tax_col))
+  otu_count_table = otu_count_table[order(otu_count_table$Freq, decreasing = TRUE),]
+  otu_list[[i]] = otu_count_table
+  
+}
+
+# Aggregation of OTUs from all samples
+otu_big_data = reduce(otu_list, full_join, by = "tax_col")
+otu_big_data[is.na(otu_big_data)] = 0
+colnames(otu_big_data)[1] = c("OTUs")
+for (i in 2:ncol(otu_big_data)) {
+  col_name_otu = paste("ADHD: Sample", i-1)
+  colnames(otu_big_data)[i] = col_name_otu
+}
+
+# Taxonomic table breakdown from OTUs --> K, P, C, O, F, G
+tax_table = data.frame(matrix(ncol = 8, nrow = 0))
+colnames(tax_table) = into_var
+
+for (i in 1:nrow(otu_big_data)) {
+  count = str_count(otu_big_data[i,1] , ';')
+  if (count == 5) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i,1]), 1, into_var[c(1, 2, 3, 5, 6, 7)], sep = ";")
+  } 
+  else if (count == 6) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i, 1]), 1, into_var[c(1, 2, 3, 5, 7, 8)], sep = ";")
+  } 
+  else if (count == 7) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i, 1]), 1, into_var[c(1, 2, 3, 4, 5, 7, 8)], sep = ";")
+  } 
+  else if (count == 8) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i, 1]), 1, into_var, sep = ";")
+  } 
+  
+  tax_table = rbind.fill(tax_table, new_row_tax)
+}
+
+tax_table = cbind(as.data.frame(otu_big_data[,1]), tax_table)
+colnames(tax_table)[1] = "OTUs"
+
+# Reformatting tables for phyloseq
+otus_vec = vector()
+
+for (i in 1:nrow(otu_big_data)) {
+  val = paste("OTU", i)
+  otus_vec = c(otus_vec, val)
+}
+
+otus_vec = as.data.frame(otus_vec)
+otu_big_data[,1] = otus_vec
+tax_table[,1] = otus_vec
+
+# Creation of sample table for phyloseq
+samples_mat = data.frame(matrix(ncol = 4, nrow = 19))
+colnames(samples_mat) = c("Sample", "Type", "Instrument Model", "Scientific Name")
+for (i in 1:nrow(samples_mat)) {
+  samples_mat[i,1] = paste("ADHD: Sample", i)
+}
+samples_mat[,2] = "case"
+samples_mat[,3] = "454 GS FLX"
+samples_mat[,4] = "Homo Sapiens"
+
+# 1st column binding to row names
+row.names(otu_big_data) = otu_big_data$OTUs
+otu_big_data = otu_big_data %>% select (-OTUs) 
+row.names(tax_table) = tax_table$OTUs
+tax_table = tax_table %>% select (-OTUs) 
+row.names(samples_mat) = samples_mat$Sample
+samples_mat = samples_mat %>% select (-Sample) 
+
+# Convert tables to matricies
+otu_big_data = as.matrix(otu_big_data)
+tax_table = as.matrix(tax_table)
+
+# Converting matricies to phyloseq objects
+OTU = otu_table(otu_big_data, taxa_are_rows = TRUE)
+TAX = tax_table(tax_table)
+samples = sample_data(samples_mat)
+carbom = phyloseq(OTU, TAX, samples)
+
+# Normalize number of reads in each sample using median sequencing depth and relative abundance phyloseq object
+total = median(sample_sums(carbom))
+standf = function(x, t=total) round(t * (x / sum(x)))
+carbom = transform_sample_counts(carbom, standf)
+carbom_clean = prune_taxa(taxa_sums(carbom)>150, carbom)
+carbom_ra = transform_sample_counts(carbom_clean, function(x) x/sum(x))
+
+# Genera Analysis 
+genus_taxa = tax_glom(carbom_clean, taxrank = "genus")
+genus_taxa_sort = as.data.frame(names(sort(taxa_sums(genus_taxa), TRUE)[1:5]))
+genus_top_sums = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(genus_taxa_sort)) {
+  genus_taxa_sort_aval = sum(as.data.frame(get_sample(genus_taxa, toString(genus_taxa_sort[i,1]))))
+  genus_top_sums[i,1] = genus_taxa_sort_aval
+  rownames(genus_top_sums)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(genus_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "genus"]
+}
+OTU_table_ra_genus = as.data.frame(otu_table(carbom_ra))
+OTU_table_ra_means_genus = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(genus_taxa_sort)) {
+  taxa_ra_mean = rowMeans(OTU_table_ra_genus[row.names(OTU_table_ra_genus) == toString(genus_taxa_sort[i,1]), ])
+  OTU_table_ra_means_genus[i,1] = taxa_ra_mean
+  rownames(OTU_table_ra_means_genus)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(genus_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "genus"]
+}
+
+# Phylum analysis
+phylum_taxa = tax_glom(carbom_clean, taxrank = "phylum")
+phylum_taxa_sort = as.data.frame(names(sort(taxa_sums(phylum_taxa), TRUE)[1:5]))
+phylum_top_sums = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(phylum_taxa_sort)) {
+  phylum_taxa_sort_aval = sum(as.data.frame(get_sample(phylum_taxa, toString(phylum_taxa_sort[i,1]))))
+  phylum_top_sums[i,1] = phylum_taxa_sort_aval
+  rownames(phylum_top_sums)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(phylum_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "phylum"]
+}
+OTU_table_ra_phylum = as.data.frame(otu_table(carbom_ra))
+OTU_table_ra_means_phylum = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(phylum_taxa_sort)) {
+  taxa_ra_meanP = rowMeans(OTU_table_ra_phylum[row.names(OTU_table_ra_phylum) == toString(phylum_taxa_sort[i,1]), ])
+  OTU_table_ra_means_phylum[i,1] = taxa_ra_meanP
+  rownames(OTU_table_ra_means_phylum)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(phylum_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "phylum"]
+}
+```
+
+```{r echo = TRUE, eval = FALSE}
+# RDP - Control Analysis R Script 
+
+#loading libraries
+
+library(ggplot2)
+library(tidyverse)
+library(rafalib)
+library(devtools)
+library(RColorBrewer)
+library(gplots)
+library(downloader)
+library(genefilter)
+library(SpikeInSubset)
+library(RCy3)
+library(readr)
+library(dplyr)
+library(stringr)
+library(ape)
+library(igraph)
+library(phytools)
+library(phyclust)
+library(metacoder)
+library(taxize)
+library(HMPTrees)
+library(plyr)
+library(phyloseq)
+
+# Taxonomic filtering
+
+# List of files from local directory (SILVA-ADHD)
+files = list.files(path = "/Users/dhyeyparikh/MyData/6th_Semester/BME_4550/Project/rdp/Control", pattern = "*.csv", full.names = T)
+
+# Taxonomy Column Names
+into_var = c("domain", "phylum", "class", "subclass", "order", "suborder", "family", "genus")
+
+# Aggregate lists of OTUs
+otu_list = list() 
+
+# Loop to generate OTUs column for aggregation
+for (i in files) {
+  tbl = sapply(i, read_csv, simplify=FALSE) %>% 
+    bind_rows(.id = "id")
+  
+  tax_col = tbl[,9]
+  
+  otu_count_table = as.data.frame(table(tax_col))
+  otu_count_table = otu_count_table[order(otu_count_table$Freq, decreasing = TRUE),]
+  otu_list[[i]] = otu_count_table
+  
+}
+
+# Aggregation of OTUs from all samples
+otu_big_data = reduce(otu_list, full_join, by = "tax_col")
+otu_big_data[is.na(otu_big_data)] = 0
+colnames(otu_big_data)[1] =c("OTUs")
+for (i in 2:ncol(otu_big_data)) {
+  col_name_otu = paste("Control: Sample", i-1)
+  colnames(otu_big_data)[i] = col_name_otu
+}
+
+# Taxonomic table breakdown from OTUs --> K, P, C, O, F, G
+tax_table = data.frame(matrix(ncol = 8, nrow = 0))
+colnames(tax_table) = into_var
+
+for (i in 1:nrow(otu_big_data)) {
+  count = str_count(otu_big_data[i,1] , ';')
+  if (count == 5) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i,1]), 1, into_var[c(1, 2, 3, 5, 6, 7)], sep = ";")
+  } 
+  else if (count == 6) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i, 1]), 1, into_var[c(1, 2, 3, 5, 7, 8)], sep = ";")
+  } 
+  else if (count == 7) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i, 1]), 1, into_var[c(1, 2, 3, 4, 5, 7, 8)], sep = ";")
+  } 
+  else if (count == 8) {
+    new_row_tax = separate(as.data.frame(otu_big_data[i, 1]), 1, into_var, sep = ";")
+  } 
+  
+  tax_table = rbind.fill(tax_table, new_row_tax)
+  
+}
+
+tax_table = cbind(as.data.frame(otu_big_data[,1]), tax_table)
+colnames(tax_table)[1] = "OTUs"
+
+# Reformatting tables for phyloseq
+otus_vec = vector()
+
+for (i in 1:nrow(otu_big_data)) {
+  val = paste("OTU", i)
+  otus_vec = c(otus_vec, val)
+}
+
+otus_vec = as.data.frame(otus_vec)
+otu_big_data[,1] = otus_vec
+tax_table[,1] = otus_vec
+
+# Creation of sample table for phyloseq
+samples_mat = data.frame(matrix(ncol = 4, nrow = 76))
+colnames(samples_mat) = c("Sample", "Type", "Instrument Model", "Scientific Name")
+for (i in 1:nrow(samples_mat)) {
+  samples_mat[i,1] = paste("Control: Sample", i)
+}
+samples_mat[,2] = "case"
+samples_mat[,3] = "454 GS FLX"
+samples_mat[,4] = "Homo Sapiens"
+
+# 1st column binding to row names
+row.names(otu_big_data) = otu_big_data$OTUs
+otu_big_data = otu_big_data %>% select (-OTUs) 
+row.names(tax_table) = tax_table$OTUs
+tax_table = tax_table %>% select (-OTUs) 
+row.names(samples_mat) = samples_mat$Sample
+samples_mat = samples_mat %>% select (-Sample) 
+
+# Convert tables to matricies
+otu_big_data = as.matrix(otu_big_data)
+tax_table = as.matrix(tax_table)
+
+# Converting matricies to phyloseq objects
+OTU = otu_table(otu_big_data, taxa_are_rows = TRUE)
+TAX = tax_table(tax_table)
+samples = sample_data(samples_mat)
+carbom <- phyloseq(OTU, TAX, samples)
+
+# Normalize number of reads in each sample using median sequencing depth and relative abundance phyloseq object
+total = median(sample_sums(carbom))
+standf = function(x, t=total) round(t * (x / sum(x)))
+carbom = transform_sample_counts(carbom, standf)
+carbom_clean = prune_taxa(taxa_sums(carbom)>150, carbom)
+carbom_ra = transform_sample_counts(carbom_clean, function(x) x/sum(x))
+
+# Genera Analysis 
+genus_taxa = tax_glom(carbom_clean, taxrank = "genus")
+genus_taxa_sort = as.data.frame(names(sort(taxa_sums(genus_taxa), TRUE)[1:5]))
+genus_top_sums = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(genus_taxa_sort)) {
+  genus_taxa_sort_aval = sum(as.data.frame(get_sample(genus_taxa, toString(genus_taxa_sort[i,1]))))
+  genus_top_sums[i,1] = genus_taxa_sort_aval
+  rownames(genus_top_sums)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(genus_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "genus"]
+}
+OTU_table_ra_genus = as.data.frame(otu_table(carbom_ra))
+OTU_table_ra_means_genus = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(genus_taxa_sort)) {
+  taxa_ra_mean = rowMeans(OTU_table_ra_genus[row.names(OTU_table_ra_genus) == toString(genus_taxa_sort[i,1]), ])
+  OTU_table_ra_means_genus[i,1] = taxa_ra_mean
+  rownames(OTU_table_ra_means_genus)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(genus_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "genus"]
+}
+
+# Phylum analysis
+phylum_taxa = tax_glom(carbom_clean, taxrank = "phylum")
+phylum_taxa_sort = as.data.frame(names(sort(taxa_sums(phylum_taxa), TRUE)[1:5]))
+phylum_top_sums = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(phylum_taxa_sort)) {
+  phylum_taxa_sort_aval = sum(as.data.frame(get_sample(phylum_taxa, toString(phylum_taxa_sort[i,1]))))
+  phylum_top_sums[i,1] = phylum_taxa_sort_aval
+  rownames(phylum_top_sums)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(phylum_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "phylum"]
+}
+OTU_table_ra_phylum = as.data.frame(otu_table(carbom_ra))
+OTU_table_ra_means_phylum = data.frame(matrix(ncol = 1, nrow = 5))
+for (i in 1:nrow(phylum_taxa_sort)) {
+  taxa_ra_meanP = rowMeans(OTU_table_ra_phylum[row.names(OTU_table_ra_phylum) == toString(phylum_taxa_sort[i,1]), ])
+  OTU_table_ra_means_phylum[i,1] = taxa_ra_meanP
+  rownames(OTU_table_ra_means_phylum)[i] = carbom_clean@tax_table[row.names(carbom_clean@tax_table) == toString(phylum_taxa_sort[i,1]), colnames(carbom_clean@tax_table@.Data) == "phylum"]
+}
+```
+
+##### *Statistical Analysis*
+|        The statistical analysis was conducted in R. Mann–Whitney–Wilcoxon U tests were conducted for two factors: Factor A to compare the effects of changing the disorder condition and Factor B to compare the effects of changing the database type. Factor A compared the disease condition (ADHD vs control) bacterial counts for *Bifidobacterium* aligned with SILVA, *Blautia* aligned with SILVA, *Bifidobacterium* aligned with RDP, and *Blautia* aligned with RDP. Factor A also compared for the relative abundance of the Actinobacteria phylum between ADHD and control patients. Factor B compared the database alignment (SILVA vs RDP) bacterial counts for *Bifidobacterium* in ADHD patients, *Bifidobacterium* in control patients, *Blautia* in ADHD patients, and *Blautia* in control patients. The Mann-Whitney-Wilcoxon U test was selected over a two-tailed t-test because our OTU abundance tables are not normally distributed. $^{14}$ The p-values obtained from the Mann-Whitney-Wilcoxon U tests were also corrected in R relative to the Bonferroni correction to mitigate the effects of the multiple statistical testing problem. 
+
+```{r, echo = TRUE, eval = FALSE}
+
+s_bifi = rbind(silva_bifi_adhd, silva_bifi_control)
+s_blautia = rbind(silva_blautia_adhd, silva_blautia_control)
+s_F = rbind(silva_F_adhd, silva_F_control)
+s_L = rbind(silva_L_adhd, silva_L_control)
+s_A = rbind(silva_A_adhd, silva_A_control)
+
+r_bifi = rbind(rdp_bifi_adhd, rdp_bifi_control)
+r_blautia = rbind(rdp_blautia_adhd, rdp_blautia_control)
+r_F = rbind(rdp_F_adhd, rdp_F_control)
+r_L = rbind(rdp_L_adhd, rdp_L_control)
+r_R = rbind(rdp_R_adhd, rdp_R_control)
+
+s1 = wilcox.test(s_bifi$Count~s_bifi$Condition)
+s2 = wilcox.test(s_blautia$Count~s_blautia$Condition)
+s3 = wilcox.test(s_F$Count~s_F$Condition)
+s4 = wilcox.test(s_L$Count~s_L$Condition)
+s5 = wilcox.test(s_A$Count~s_A$Condition)
+
+r1 = wilcox.test(r_bifi$Count~r_bifi$Condition)
+r2 = wilcox.test(r_blautia$Count~r_blautia$Condition)
+r3 = wilcox.test(r_F$Count~r_F$Condition)
+r4 = wilcox.test(r_L$Count~r_L$Condition)
+r5 = wilcox.test(r_R$Count~r_R$Condition)
+
+silva_p_vect = c(s1$p.value, s2$p.value, s3$p.value, s4$p.value, s5$p.value)
+p.adjust(silva_p_vect, method = "bonferroni")
+
+rdp_p_vect = c(r1$p.value, r2$p.value, r3$p.value, r4$p.value, r5$p.value)
+p.adjust(rdp_p_vect, method = "bonferroni")
+
+phylum_data <- data.frame(`Relative.Abundance...Sheet1.(1)`)
+#SILVA Database
+adhd_silva = phylum_data$Rel..Abundance
+control_silva = phylum_data$Rel..Abundance.1
+
+adhd_rdp = phylum_data$Rel..Abundance.2
+control_rdp = phylum_data$Rel..Abundance.3
+a = wilcox.test(adhd_silva, control_silva);
+b = wilcox.test(adhd_rdp, control_rdp);
+p.adjust(a, method = "bonferroni")
+p.adjust(b, method = "bonferroni")
+```
+
+```{r echo = TRUE, eval = FALSE}
+s <- read.delim("~/University of Virginia/UVA_Homework/Fourth Year (Spring)/BME 4550 - Data Science/Project/pics/silva_analysis.txt", header = TRUE)
+rdp <- read.delim("~/University of Virginia/UVA_Homework/Fourth Year (Spring)/BME 4550 - Data Science/Project/pics/rdp_analysis.txt", header = TRUE)
+
+silva <- s[,1:4]
+
+library(dplyr)
+
+silva_bifi_adhd = filter(silva, Genus == "Bifidobacterium", Condition == "ADHD")
+silva_bifi_control = filter(silva, Genus == "Bifidobacterium", Condition == "Control")
+silva_blautia_adhd = filter(silva, Genus == "Blautia", Condition == "ADHD")
+silva_blautia_control = filter(silva, Genus == "Blautia", Condition == "Control")
+silva_F_adhd = filter(silva, Genus == "Faecalibacterium", Condition == "ADHD")
+silva_F_control = filter(silva, Genus == "Faecalibacterium", Condition == "Control")
+silva_L_adhd = filter(silva, Genus == "Lachnospiraceae", Condition == "ADHD")
+silva_L_control = filter(silva, Genus == "Lachnospiraceae", Condition == "Control")
+silva_A_adhd = filter(silva, Genus == "Agathobacter", Condition == "ADHD")
+silva_A_control = filter(silva, Genus == "Agathobacter", Condition == "Control")
+
+rdp_bifi_adhd = filter(rdp, Genus == "Bifidobacterium", Condition == "ADHD")
+rdp_bifi_control = filter(rdp, Genus == "Bifidobacterium", Condition == "Control")
+rdp_blautia_adhd = filter(rdp, Genus == "Blautia", Condition == "ADHD")
+rdp_blautia_control = filter(rdp, Genus == "Blautia", Condition == "Control")
+rdp_F_adhd = filter(rdp, Genus == "Faecalibacterium", Condition == "ADHD")
+rdp_F_control = filter(rdp, Genus == "Faecalibacterium", Condition == "Control")
+rdp_L_adhd = filter(rdp, Genus == "Lachnospiraceae", Condition == "ADHD")
+rdp_L_control = filter(rdp, Genus == "Lachnospiraceae", Condition == "Control")
+rdp_R_adhd = filter(rdp, Genus == "Ruminococcaceae", Condition == "ADHD")
+rdp_R_control = filter(rdp, Genus == "Ruminococcaceae", Condition == "Control")
+
+s_bifi = rbind(silva_bifi_adhd, silva_bifi_control)
+s_blautia = rbind(silva_blautia_adhd, silva_blautia_control)
+s_F = rbind(silva_F_adhd, silva_F_control)
+s_L = rbind(silva_L_adhd, silva_L_control)
+s_A = rbind(silva_A_adhd, silva_A_control)
+
+r_bifi = rbind(rdp_bifi_adhd, rdp_bifi_control)
+r_blautia = rbind(rdp_blautia_adhd, rdp_blautia_control)
+r_F = rbind(rdp_F_adhd, rdp_F_control)
+r_L = rbind(rdp_L_adhd, rdp_L_control)
+r_R = rbind(rdp_R_adhd, rdp_R_control)
+
+s1 = wilcox.test(s_bifi$Count~s_bifi$Condition)
+s2 = wilcox.test(s_blautia$Count~s_blautia$Condition)
+s3 = wilcox.test(s_F$Count~s_F$Condition)
+s4 = wilcox.test(s_L$Count~s_L$Condition)
+s5 = wilcox.test(s_A$Count~s_A$Condition)
+
+r1 = wilcox.test(r_bifi$Count~r_bifi$Condition)
+r2 = wilcox.test(r_blautia$Count~r_blautia$Condition)
+r3 = wilcox.test(r_F$Count~r_F$Condition)
+r4 = wilcox.test(r_L$Count~r_L$Condition)
+r5 = wilcox.test(r_R$Count~r_R$Condition)
+
+silva_p_vect = c(s1$p.value, s2$p.value, s3$p.value, s4$p.value, s5$p.value)
+p.adjust(silva_p_vect, method = "bonferroni")
+
+rdp_p_vect = c(r1$p.value, r2$p.value, r3$p.value, r4$p.value, r5$p.value)
+p.adjust(rdp_p_vect, method = "bonferroni")
+
+adhd_bifi = rbind(silva_bifi_adhd, rdp_bifi_adhd)
+control_bifi = rbind(silva_bifi_control, rdp_bifi_control)
+adhd_blautia = rbind(silva_blautia_adhd, rdp_blautia_adhd)
+control_blautia = rbind(silva_blautia_control, rdp_blautia_control)
+
+a1 = wilcox.test(adhd_bifi$Count~adhd_bifi$Database)
+c1 = wilcox.test(control_bifi$Count~control_bifi$Database)
+a2 = wilcox.test(adhd_blautia$Count~adhd_blautia$Database)
+c2 = wilcox.test(control_blautia$Count~control_blautia$Database)
+
+a_vect = c(a1$p.value, a2$p.value)
+p.adjust(a_vect, method = "bonferroni")
+
+c_vect = c(c1$p.value, c2$p.value)
+p.adjust(c_vect, method = "bonferroni")
+```
+
+The corrected p-values for the *Bifidobacterium* and *Blautia* genera and Actinobacteria phylum were also visualized using boxplots developed in R. 
+
+```{r echo = TRUE, eval = FALSE}
+phylum_data <- data.frame(`Relative.Abundance...Sheet1.(1)`)
+#SILVA Database
+adhd_silva = phylum_data$Rel..Abundance
+control_silva = phylum_data$Rel..Abundance.1
+
+adhd_rdp = phylum_data$Rel..Abundance.2
+control_rdp = phylum_data$Rel..Abundance.3
+
+#Boxplot 
+library(ggplot2)
+
+boxplot(adhd_rdp, control_rdp, main = "Boxplots of Actinobacteria Abundance using RDP Database", names = c("ADHD Patients", "Control Patients"), ylab = "Relative Abundance", border = c("red", "blue"))
+
+        
+boxplot(adhd_silva, control_silva, main = "Boxplots of Actinobacteria Abundance using SILVA Database", names = c("ADHD Patients", "Control Patients"), ylab = "Relative Abundance", border = c("red", "blue"))
+```
+
+```{r echo = TRUE, eval = FALSE}
+library(ggpubr)
+s = filter(silva, Genus == "Bifidobacterium" | Genus == "Blautia")
+r = filter(rdp, Genus == "Bifidobacterium" | Genus == "Blautia")
+
+ggboxplot(silva, x = "Genus", y = "Count", color = "Condition", title = "Boxplots of Bacteria Counts for SILVA Database", palette = c("red", "blue"), ylab = "Relative Abundance" ) + 
+  theme(axis.text.x = element_text(angle = 25, hjust = 1, vjust = 1), plot.title = element_text(hjust = 0.5))
+
+ggboxplot(rdp, x = "Genus", y = "Count", color = "Condition", title = "Boxplots of Bacteria Counts for RDP Database", palette = c("red", "blue"), ylab = "Relative Abundance") + 
+  theme(axis.text.x = element_text(angle = 25, hjust = 1, vjust = 1), plot.title = element_text(hjust = 0.5))
+```
+
+### **Results**
+##### *Exploratory Visualization Analysis*
+![](/Users/dhyeyparikh/Downloads/pics/figure 1_2.png)
+Prior to analyzing the genera and phyla taxa read counts or relative abundance values between the two databases used and populations sampled, heatmaps and alpha diversity plots were generated for the SILVA database taxonomic classifications (Figure 1). As an initial exploratory approach, these visualizations provided us insight into the most predominant genera taxa in both the ADHD case and control samples, along with potential factors affecting these taxa due to limited richness and diversity within each sample. From this exploratory approach, two main genera were identified as potential indicators of differences within the gut microbiome between ADHD case and control subjects: *Bifidobacterium* and *Blautia*. 
+
+![](/Users/dhyeyparikh/Downloads/pics/table 1_2.png)
+![](/Users/dhyeyparikh/Downloads/pics/table 2_2.png)
+Relative abundances were calculated for the five phyla with the greatest number of read counts for both the SILVA and RDP databases (see Tables 1 and 2). Two-sample Mann–Whitney–Wilcoxon U tests were performed using R between the percent abundances in the Actinobacteria, Firmicutes, and Bacteroidetes phylums between ADHD and control patients. These phylums were selected as these were the phylums with the greatest relative abundances. Additionally, Actinobacteria is the phylum including *Bifidobacterium* and Firmicutes includes *Blautia*. The Mann–Whitney–Wilcoxon U tests were done for both the SILVA and RDP database. Using a significance level of 0.05, this test determined there was a significant difference between the relative abundance of bacteria in the Actinobacteria phylum between ADHD and control patients (p = 0.008202 with SILVA and p = 0.005556 with RDP). The test also determined there was no significant difference relative abundance of bacteria in the Firmicutes phylum between the two conditions using either database. The Mann-Whitney test determined a significant difference in the relative abundance of Bacteroidetes between ADHD and control patients using alignment with the SILVA database but not with using the RDP database at a significance level of 0.05 (see Figure 2). This supports that two separate databases may need to be utilized to analyze OTU classification due to the amount of coverage provided by the larger SILVA versus the specific and smaller RDP database. 
+
+
+![](/Users/dhyeyparikh/Downloads/pics/figure 2.png)
+The boxplots (see Figure 2) of relative abundance of the three phylum show the median relative abundance was greater in ADHD patients than in control patients using both databases in Actinobacteria. The median relative abundances for Firmicutes and Bacteroidetes were much closer between the two conditions except for the Bacteroidetes phylum as classified by the SILVA database. Outliers are shown in both ADHD and control patients using both databases.
+
+![](/Users/dhyeyparikh/Downloads/pics/figure 3_2.png)
+Boxplots of the relative abundance of the *Bifidobacterium* and *Blautia* bacteria show a difference between ADHD and control patients when aligned with the SILVA and RDP databases (see Figure 3). The median relative abundance of *Bifidobacterium* was greater than the relative abundance of *Blautia* in ADHD patients for both databases. In control patients, the median percent abundance was approximately the same for *Bifidobacterium* and *Blautia*. 
+
+Two two-sample Mann–Whitney–Wilcoxon U tests and Bonferroni corrections were performed comparing the bacteria counts in the *Bifidobacterium* and *Blautia* genera between ADHD and control conditions in the SILVA and RDP databases. Using a significance level of 0.05, a statistically significant difference was observed in the relative abundance of *Bifidobacterium* between ADHD and control patients using SILVA and RDP (p = 0.01497 and p = 0.01654, respectively). There was no statistically significant difference observed in the relative abundance of *Blautia* between ADHD and control patients using either database (p = 1.0000). The other most relatively abundant bacterial genera did not have significant differences between ADHD and control patients in both the SILVA and RDP databases.
+
+![](/Users/dhyeyparikh/Downloads/pics/table 3_2.png)
+Mann–Whitney–Wilcoxon U tests were performed comparing SILVA and RDP relative abundance bacteria counts for the *Bifidobacterium* and *Blautia* genera in ADHD and control patients (Table 3). Using a significance level of 0.05, no statistically significant difference was observed between SILVA and RDP for the two genera in ADHD and control patients. While this may indicate that either database can be used for alignment, further experimentation will need to be conducted in order to confirm if the difference between the database alignments are truly negligible.
+
+
+### **Discussion**
+|        The goal of this study was to analyze the taxonomic breakdown of the gut microbiome between diagnosed ADHD patients and control subjects. Specifically, the study analyzed the top abundance genera and phyla taxa present between the two subject types to determine differences within specific bacterial taxa that may be indicative of the progression of ADHD. 
+
+|        The difference between the SILVA and RDP databases used for classification were compared by using non-parametric Mann–Whitney–Wilcoxon U tests corrected via the Bonferroni correction and was shown not to be statistically different at an alpha value of 0.05 as shown in Table 3. It is sufficient to say that the results were not obtained by dataset variability or bias and either database can be used to draw a conclusion. However, this is limited to the top two abundant taxonomies versus all the taxa present in the gut microbiome. 
+
+|        There is not a statistically significant difference between the relative abundance in the *Blautia* genus in patients with ADHD and patients without. It has been shown in previous literature that an increase of bacteria in this genus has been linked to neurodegenerative disorders, specifically Parkinson’s disease. $^{9}$ However, the insignificant difference of bacteria in this genus in patients with and without ADHD shows that the effect of common bacterial taxa of the gut microbiome on susceptibility to ADHD is specific. 
+
+|        Furthermore, there was not a statistically significant difference in the highly abundant Firmicutes and Bacteroidetes phyla with the SILVA database classification (see Figure 2) as seen in previous literature with patients with ADHD and patients without. $^{15}$ However within the RDP database there was a stastically significant difference between the Bacteroidetes phylum between ADHD and control patients, which is indicative of the need for utilizing two databases when performing OTU classification. There was a statistically significant difference in bacteria in the Actinobacteria phylum, specifically the *Bifidobacterium* genus as seen in Figure 3. The results demonstrated a statistically significant increase between the relative abundance of bacterial taxa in the *Bifidobacterium* genus in patients with ADHD and patients without. This shows that there may be a positive correlation between increased bacteria from the *Bifidobacterium* genus and risk of ADHD. Previous studies have analyzed *Bifidobacterium* as enhancing the biosynthesis of a dopamine precursor in the gut microbiome of ADHD patients, which was also linked to altered reward anticipation responses in the brain, a neural hallmark of ADHD. $^{15}$
+
+|        A limitation to this experiment is that the data doesn’t show how the gut directly affects the brain. However, according to previous literature, the gut and the brain have communication with each other through the gut-brain axis. It has been shown that an increase in *Bifidobacterium* is linked to a significantly enhanced encoding of cyclohexadienyl dehydratase in patients with ADHD, which is involved in the synthesis of phenylalanine, a precursor of dopamine. The increase of this enzyme is associated with risk of ADHD. Therefore, we can safely conclude that there may be a positive correlation between greater abundance of bacteria from the *Bifidobacterium* genus and the development of ADHD. 
+
+|        Another limitation to this experiment is that we didn’t analyze the entire gut microbiome and only analyzed the most abundant genera and phyla, specifically from bacterial taxa that were already shown to have a correlation with ADHD and neurodegenerative disorders. This lowered the scope of our data and other bacteria in the gut microbiome may have potentially had a causal effect on developing a risk of ADHD. Future studies could analyze the entire gut microbiome and increase the scope of this experiment. 
+
+|        The gut microbiome can be used as a biomarker in diagnosing patients with ADHD. *Bifidobacterium* can be used as a biomarker since the results are consistent across our study and previous literature. However, using bacteria in the Firmicutes and Bacteroidetes phylums, while highly abundant in the gut microbiome between both ADHD and control subjects, should be used with caution as biomarkers since there is variability in our results and previous literature and using them may provide inaccurate diagnosis. Further studies to investigate the exact mechanisms between the gut and the brain need to be performed in order to develop a clear protocol for conducting microbiota-based interventions and the effect of pre- and probiotics on mental health. 
+
+
+### **References**
+1.	Gut Microbiome - an overview | ScienceDirect Topics. https://www.sciencedirect.com/topics/medicine-and-dentistry/gut-microbiome.
+2.	Carabotti, M., Scirocco, A., Maselli, M. A. & Severi, C. The gut-brain axis: interactions between enteric microbiota, central and enteric nervous systems. Ann. Gastroenterol. Q. Publ. Hell. Soc. Gastroenterol. 28, 203–209 (2015).
+3.	Dam, S. A. et al. The Role of the Gut-Brain Axis in Attention-Deficit/Hyperactivity Disorder. Gastroenterol. Clin. North Am. 48, 407–431 (2019).
+4.	NIMH » Attention-Deficit/Hyperactivity Disorder. https://www.nimh.nih.gov/health/topics/attention-deficit-hyperactivity-disorder-adhd/index.shtml.
+5.	Rinninella, E. et al. What is the Healthy Gut Microbiota Composition? A Changing Ecosystem across Age, Environment, Diet, and Diseases. Microorganisms 7, (2019).
+6.	Prehn-Kristensen, A. et al. Reduced microbiome alpha diversity in young patients with ADHD. PLoS ONE 13, (2018).
+7.	Aarts, E. et al. Gut microbiome in ADHD and its relation to neural reward anticipation. PLoS ONE 12, (2017).
+8.	Ederveen, T. H. A. On the role of host microbiota associated with health and disease - a metagenomics survey through marker-gene sequencing and genomics approaches. /paper/On-the-role-of-host-microbiota-associated-with-and-Ederveen/cb98e502de029bebc23b2fe3dafaf2f68b963cd8 (2019).
+9.	Cenit, M. C., Sanz, Y. & Codoñer-Franch, P. Influence of gut microbiota on neuropsychiatric disorders. World J. Gastroenterol. 23, 5486–5498 (2017).
+10.	RDP Release 11 -- Sequence Analysis Tools. https://rdp.cme.msu.edu/.
+11.	Silva. https://www.arb-silva.de/.
+12.	von Rhein, D. et al. The NeuroIMAGE study: a prospective phenotypic, cognitive, genetic and MRI study in children with attention-deficit/hyperactivity disorder. Design and descriptives. Eur. Child Adolesc. Psychiatry 24, 265–281 (2015).
+13.	Schedule for Affective Disorders and Schizophrenia for School-Age Children-Present and Lifetime Version (K-SADS-PL): initial reliability and validi... - PubMed - NCBI. https://www.ncbi.nlm.nih.gov/pubmed/9204677.
+14.	Weiss, S. et al. Normalization and microbial differential abundance strategies depend upon data characteristics. Microbiome 5, (2017).
+15.	Aarts, E. et al. Gut microbiome in ADHD and its relation to neural reward anticipation. PLoS ONE 12, (2017).

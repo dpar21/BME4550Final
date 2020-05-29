@@ -1,0 +1,186 @@
+---
+title: "Final Report: Peer Review Revisions"
+author: "Dhyey Parikh, Sarah Meng, An Smith, Dana Wang (Group 5)"
+date: "4/26/2020"
+output:
+  html_document: default
+---
+
+### **Response to Reviewer 1:**
+
+
+#### **Major Points:**
+
+**1. The authors should not claim to be comparing the entire gut microbiome if analysis is being performed on a few phylums and genuses. The authors should either perform t-tests on every microbiome phylum and analyze the results, or minimize the scope of their claims.**
+
+This claim is corrected in the manuscript to specify that we will be analyzing specifically the highly read genera and phyla and not the entire taxonomic breakdown of the gut microbiome. Furthermore, this will limit the statistical tests as well along with the Bonferroni correction for the multiple testing problem. 
+
+**2. Although the authors claim that there was no significant difference between the SILVA database and RDP database, they still showed boxplots of the different expression levels that showed a different number of outliers in the data. These differences in databases were never explained. Furthermore, it was never clear in the first place why two different databases were used to analyze the data. As a result, the authors should provide more background on these databases (specifically how they differ), and explain how differences in the database may manifest in or influence the results. If there are no substantial differences, then there is no point in incorporating both database results in the analysis.**
+
+In the Introduction section, it is explained why two databases were used to analyze the data, primarily to ensure that the SILVA database does not overclassify the normalized OTU data. Background on the databases are also provided in the same section. The boxplots in the Results section for the two databases are also removed, instead replaced with a corrected p-value table for the two major genera within the ADHD and control samples. 
+
+**3.It was unclear why specific phylum or bacterial genuses were analyzed over others. For example, although the background provides some information on the genus’ connection to ADHD and neurological disorder, in the results it simply states that “From these heatmaps, two main genera taxa were identified: Bifidobacterium and Blautina” without offering further explanation, or explaining why other genuses were not as important to analyze. More justification (in the form of interpreting the heatmap results more and providing more information on why other genuses are not going to be analyzed) should be included.**
+
+This is fixed by using heat maps and alpha diversity plots for initial exploratory analysis and visual reference. Tables are added to now compare the highest read genera and phyla in each with corrected p-values and box-plots for only the two major read genera in the SILVA database as this is the primary database for analysis. The reason for the two highest read genera plotted is explained within the Introduction section regarding Bifidobacterium and Blautia being commonly seen bacterial genera in ADHD patients from previous literature. 
+
+**4. “Neural reward anticipation” is never mentioned as a concept in the introduction or discussion despite appearing in the title of the paper. This should be removed from the title or expanded on in the paper.**
+
+The analysis of neural reward anticipation has been removed from the title of the paper as this will not be analyzed in the study.
+
+
+#### **Minor Points:**
+
+**1. In general, most of the graphs could use more analysis and explanation. The discussion part of the paper focuses almost exclusively on the t-test results, and the heat maps and box-plots just seem to be in the results for the sake of being there. Incorporating them into the discussion and analysis of results would better justify their existence. **
+
+More analysis and explanation has been added to the boxplots, along with removal of tables to incorporate the corrected p-values into the plots. Heat maps and alpha diversity plots have been limited to initial exploratory analysis but have been incorporated into the Results section. 
+
+**2. Because the authors are pulling information from another study, I think it is important that they at the very least name the study and its purpose. As a result, more information (such as the name and purpose) on the study that produced the data should be added to the introduction or materials section.**
+
+The studies have been cited with in-text citations. As no data but only resulting conclusions have been presented, the studies have not been mentioned by name or purpose. 
+
+**3. I would remove the header from appearing on every single page to clear up space and fix some indentation issues (specifically on the 2nd page).**
+
+This has been attempted to be fixed, however there are limitations present due to the required .html format of the manuscript.  
+
+**4. The general formatting could be revised in the results section to avoid having a huge amount of blank white space on every page in the results section.**
+
+This has been attempted to be fixed, however there are limitations present due to the required .html format of the manuscript. Furthermore, reformatting has been done to the Results section for better flow of analysis and discussion.
+
+**5. Some sentences throughout the paper run on and could be restructured to be more concise as they tend to run on.**
+The paper has been edited to remove most run-on sentences and improve overall sentence structure. 
+
+
+### **Response to Reviewer 2:**
+
+
+#### **Major Points:**
+
+**1. Introduction section: what additional literature is available that would reinforce the suspicion that Blautia bacteria could be associated with neurodegenerative disorders? While it is evident that Bifidobacteria has downstream effects within the gut-brain axis which could be a contributor to ADHD etiology and neural reward anticipation, it is not as apparent that this is the case with genus Blautia. The motivation of the study is diminished when using arterial hypertension and imbalances in glucose metabolism as physiological indicators of a possible causal relationship between Blautia relative abundances and ADHD. Providing a more convincing motivation through a more descriptive landscape of the current literature on Blautia as implicated in neural disorders will serve to better engage the scientific community earlier on in the paper, and to keep readers interested through the discussion section.**
+
+More prior literature has been added to reinforce that Blautia may be associated with neurodegenerative disorders. This provides a similar implication as Bifidobacterium and has been expanded upon in the Introduction and Discussion sections.
+
+**2. Methods section: why did the statistical analysis of factor B not include read counts or relative abundances of bacterial phyla displayed in figures 1 and 2 besides actinobacteria (Bifidobacteria and Blautia)? Using these results for further statistical interpretation may be useful in assessing the overall consistency of these databases across different bacterial phyla. Such analysis may serve to further validate the hypothesis that there is no significant difference in phyla and genera classifications as determined through read counts and percent abundances between reference databases. If pursued, the results could be appended to the end of the results section, and may help to resolve the author’s statement: ‘While this may indicate that either database can be used for alignment, further experimentation will need to be conducted in order to confirm if the difference between the database alignments are truly negligible’. Otherwise, if the data, displayed in figure 1, on bacterial phyla read counts and abundances is not interpreted or utilized in some way in the report, it seems extraneous to include, and could be moved to supplementary materials or an appendix if deemed appropriate.**
+
+This has been fixed with a table of corrected p-values comparing both databases with the top genera read in both ADHD and control samples. Genera are used as they are the most specific taxonomic classification provided with the SINA tool and SIlVA plus RDP taxonomic reference databases. A resulting discussion follows the table to emphasize our previously mentioned conclusion that either database can be used for “taxonomic classification” and not “alignment.” 
+
+**3. Beginning of discussion section: what do the author’s mean by ‘diversity’? Depending upon the scope of the definition of ‘gut microbiome diversity’ (i.e. total number of detected microbes or threshold for distribution of percent abundances?), it may not be appropriate to state that ‘our data supports this notion’. Consider either revising this section to be more specific about the definition of diversity or avoid drawing this conclusion to hone the discussion on differences in abundances of the two bacterial genera analyzed.**
+
+This claim is corrected in the manuscript to specify that we will be analyzing specifically the highly read genera and phyla and not the entire taxonomic breakdown of the gut microbiome which is defined in most literature as gut microbiome diversity. Furthermore, this will limit the statistical tests as well along with the Bonferroni correction for the multiple testing problem. 
+
+**4. Discussion section: what is the meaning of the statement: ‘However, the insignificant difference of bacteria in this genus in patients with and without ADHD shows that the effect of the decrease in diversity of the gut microbiome on susceptibility to ADHD is specific.’ It is unclear what conclusions are being drawn from the previously mentioned literature in contrast to the results of the study, as it relates to insignificant differences in abundances of genus Blautia in the gut microbiome.**
+
+The previously mentioned statement describes the conclusion that the effect of a decrease in diversity of the gut microbiome on susceptibility to ADHD is taxa specific. This conclusion was drawn because Blautia was found to have no significant difference in abundance between ADHD and control but Bifidobacterium was found to have a significant difference between ADHD and control.  
+
+
+#### **Minor Points:**
+
+**1. Methods and discussion sections: please distinguish between rRNA sequence aligning using SINA and taxonomic classification using SILVA and RDP. While they are similar in interpretative value, they seem to be used interchangeably at the end of the discussion section, yet they are different and distinct steps of the authors’ analysis pipeline as outlined in the methods section.**
+
+This distinction has been made clear within the Methods and Discussion sections. The SINA tool has the capability to perform both alignment and classification, where alignment was done to the SILVA reference database but classification was done with the SILVA and RDP taxonomic reference databases. 
+
+**2. End of introduction section: misspelling of Blautia**
+
+Incorrect spellings have been appropriately fixed.
+
+**3. Methods section: it is slightly redundant to describe how the data is separated based on sample condition and database classification in R. It might be reasonable to either significantly reduce or eliminate this short section.**
+
+This section has been kept in the manuscript to allow for better understanding of the following R scripts.
+
+**4. Methods section: a brief description of what an operative taxonomic unit is in the context of this study would provide additional clarity about data processing.**
+
+The definition and explanation of an operating taxonomic unit has been added to the Methods section. 
+
+**5. Methods section: ‘The outliers of data were removed using the following code in R’ is not followed by an R script.**
+
+This portion has been moved to precede the R scripts use to format and manipulate the data from the SINA tool
+
+**6. Results section: did the authors ever consider eliminating the samples with high abundances of Rumuinococcus or Streptococcus genus taxa as that may have contributed to a decrease in gut microbiome diversity? While the authors may not be aware of the nuances of bacterial competition in the gut, it might be a good idea to run a quick sensitivity analysis here to potentially improve the cleanliness of the results.**
+
+This was not considered, but only the RDP database demonstrated any incidence of high relative abundances of Ruminococcus or Streptococcus genus taxa in the study. This has been added as a limitation to the study. 
+
+**7. Results section: the authors should consider moving the heatmaps of relative taxa abundances before the boxplot of the Actinobacteria abundances to follow the analysis workflow described in the methods section.**
+
+This has been done in the reformatting of the Results section to include an initial section for exploratory data analysis via visualization of heat maps and alpha diversity plots. 
+
+**8. Results section: ‘Therefore, we can safely conclude that there is a significant and potentially causal relationship between Bifidobacterium and the development of ADHD.’ Using more precise terminology such as ‘positive correlation’ in this statement might reduce the possibility for misinterpretation.**
+
+This was fixed within the Results section for better interpretation. 
+
+
+### **Response to Reviewer 3:**
+
+
+#### **Major Points:**
+
+**1. The paper walks through the analysis process really well, giving a detailed description of each step, but I am curious why there are not any embedded code chunks within the paper. I believe this is something that will add to the understanding of what each description is stating.**
+
+We have separated the Materials and Methods section using section headers for each of the different analyses steps. 
+
+**2. In your Results section, Figure 2 seems to be the justification for why Bifidobacterium and Blautia are chosen as the genera taxa that are analyzed between the ADHD and control samples. Why is this Figure this far into your Results section when you have mentioned these two genera taxa many times in your Results already? Is this something that should be moved to the beginning of your Results section?**
+
+Prior to Figure 2, Bifidobacterium was only mentioned once in the Results section as justification for analysis of the Actinobacteria phylum. We wanted to confirm using the Mann-Whitney-Wilxocon U Test of the Actinobacteria that there was a statistically significant difference in the bacteria abundance in the phylum containing Bifidobacterium, as we expected to see. We then moved to analysis of the two genera taxa. 
+
+**3. Table 3 and Table 4 look exactly the same but have different p-values. The captions and titles are different making them extremely hard to understand. Is this a mistake? Something needs to be fixed here for the reader to understand what is actually different between the p-values. Because of this confusing table, it is hard to understand the discussion of these results.**
+
+Table 3 and Table 4 have different captions and titles as they contain different comparisons. References to the tables have been included in the appropriate place in the Results section for clarity. 
+
+**4. There is a claim that there is not a statistical difference in Proteobacteria and Bacteroidetes with patients with ADHD and patients without. I do not see where this claim is defended by statistical analysis. Is there a reason these phyla are mentioned since they are not the ones being analyzed? If so, there need to be numbers to back up the claim.**
+
+The discussion about the Proteobacteria was taken out since it was not in the scope of our project and the p-values between the Bacteroidetes and Firmicutes are shown in Figure 2. 
+
+**5. You state in your Introduction that Firmicutes coincide with Blautia but this is the only place you mention this. Under your description of Table 1 and 2, you state why Bifidobacterium are chosen moving forward but you do not give a justification for Blautia. What is your reason for this? Maybe restate what you did in the Introduction just for clarification.**
+
+We decided to use the Blautia genus as a comparison because differences in abundance of this genus have been linked to neurodegenerative disorders, as described in the Introduction. We have additionally run Mann-Whitney-Wilxocon U-tests on the top three phylums (including Firmicutes) to determine if there are statistically significant differences in abundance between ADHD and control patients and have added appropriate clarifying descriptions. 
+
+
+#### **Minor Points:**
+
+**1. Why are you using two different databases? Is this necessary for analysis? I found it hard to follow at some points when you were going back and forth between the two different databases. Consider just using one.**
+
+In the Introduction section, it is explained why two databases were used to analyze the data, primarily to ensure that the SILVA database does not overclassify the normalized OTU data. Background on the databases are also provided in the same section. The boxplots in the Results section for the two databases are also removed, instead replaced with a corrected p-value table for the two major genera within the ADHD and control samples. 
+
+**2. The explanation of Factor A and Factor B were confusing. Consider using a chart to represent the different alignments.**
+
+The explanation under the Statistical Analysis subheading for Factor A and B was rewritten for clarification.
+
+**3. I believe that Professor Civelek mentioned in class that Table captions should be above the tables. In this case, your table captions should be moved to the top of your tables.**
+
+The captions have been moved to above each table. 
+
+**4. In your results section, you state that there are three outliers shown in the boxplot using RDP database and two shown using the SILVA database. Based on the figure provided, this appears to be the other way around.**
+
+The Results section describing the outliers has been edited to accurately reflect the boxplot data. 
+
+**5. All of your figures are very difficult to read, making it hard to understand what they are saying. This is especially true for Figure 2, the heatmap. Can you increase the font size and bold the words to increase readability?**
+
+The figures have been changed to be more clear after HTML formatting. However, this is keeping in mind of the limitations of the HTML format.
+
+**6. Why do you only have 19 ADHD patients but 76 control patients? That organization of control vs. sick patients seems too heavily weighted towards the control patients. Would this skew your data? Also, why did you choose children as your patients?**
+
+The dataset collected only had data for 19 ADHD patients and 76 control patients. While there are more control patients than ADHD patients, the data has been appropriately normalized based on median sequencing read depth to prevent skewing of the data. Children were selected as patients because ADHD is generally diagnosed in early childhood and as a result, gut microbiome diversity and its relation to ADHD is a necessary investigation. This is addressed in the dataset section of our paper.
+
+**7. In your Discussion section, you capitalized the word “and” between Table 3 and Figure 3 in paragraph 4.**
+
+Small editing errors have been corrected. 
+
+**8. In your Materials and Methods section, the spacing between the heading and the start of your paragraph is different than your other sections. There are also missing spaces between the end of some of your sentences and the start of the next ones.**
+
+Spacing issues have been corrected. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
